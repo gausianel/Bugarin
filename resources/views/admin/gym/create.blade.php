@@ -6,27 +6,19 @@
 <div class="container mt-10 mb-10 px-6 py-10">
     <div class="max-w-xl mx-auto bg-white shadow-xl rounded-2xl p-8">
         
-        <!-- Tombol Back -->
-        <div class="mb-6">
-            <a href="{{ route('admin.dashboard') }}" 
-               class="inline-flex items-center px-4 py-2 bg-gray text-black rounded-lg hover:bg-gray-200 transition">
-                ← Kembali ke Dashboard
-            </a>
-        </div>
-        
+       
         <h1 class="text-3xl font-extrabold text-gray-800 mb-8 text-center">
             {{ isset($gym) ? '🏋️ Edit Profil Gym' : 'Masukan Profil GYM anda' }}
         </h1>
 
-        <form method="POST" 
-              action="{{ isset($gym) ? route('admin.gym.update', $gym->id) : route('admin.gym.store') }}" 
-              enctype="multipart/form-data" 
-              class="space-y-2">
-            
-            @csrf
-            @if(isset($gym))
-                @method('PUT')
-            @endif
+       <form method="POST" 
+        action="{{ isset($gym) ? route('admin.gyms.update', $gym->id) : route('admin.gyms.store') }}" 
+        enctype="multipart/form-data" 
+        class="space-y-2">
+        @csrf
+        @if(isset($gym))
+            @method('PUT')
+        @endif
 
             <!-- Nama -->
             <div>

@@ -17,6 +17,7 @@ use App\Http\Controllers\ClassScheduleController;
 use App\Http\Controllers\MembershipPackageController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\ReportController;
+use App\Models\Profile;
 
 // ============================
 // 🟢 Guest Routes
@@ -24,17 +25,15 @@ use App\Http\Controllers\ReportController;
 Route::get('/', fn() => view('welcome'));
 Route::get('/maintenance', fn() => view('maintenance'))->name('maintenance');
 
-
-
 // 🔑 Login & Register
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/login/admin', [AuthController::class, 'showAdminLoginForm'])->name('login.admin');
 Route::post('/login/admin', [AuthController::class, 'loginAdmin']);
 
-
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/register', [AuthController::class, 'showregister']);Route::post('/register/member', [AuthController::class, 'storeMember']);
+Route::post('/register/gym', [AuthController::class, 'storeGym']);
 
 // Pisah Member & Gym
 Route::get('/register/member', [AuthController::class, 'createMember'])->name('register.member');
@@ -104,80 +103,75 @@ Route::middleware('auth')->group(function () {
         Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
         Route::get('/info', [GymInformationController::class, 'index'])->name('info');
         Route::get('/qr/refresh', [DashboardController::class, 'refresh'])->name('qr.refresh');
+        Route::get('/membership', [ProfileController::class, 'index'])->name('membership.index');
+        
+
+
+        Route::get('/gyms', [GymController::class, 'index'])->name('gyms.index');
+
     });
+
+    Route::get('/gyms', [GymController::class, 'index'])->name('gyms.index');
+    Route::get('/gyms/{gym}', [GymController::class, 'show'])->name('gyms.show');
+    
+
+
 
     // ============================
     // 🔹 Admin Routes
     // ============================
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+        // Dashboard admin
         Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard');
 
+        // Gym create (pasca register pertama kali)
+        Route::get('/gyms/create', [GymController::class, 'create'])->name('gyms.create');
+        Route::post('/gyms', [GymController::class, 'store'])->name('gyms.store');
+        Route::get('/gyms/{gym}/edit', [GymController::class, 'edit'])->name('gyms.edit');
+        Route::put('/gyms/{gym}', [GymController::class, 'update'])->name('gyms.update');
+
+        // Gym Settings (khusus admin login)
+        Route::get('/settings', [GymController::class, 'edit'])->name('settings');
+        Route::put('/settings', [GymController::class, 'update'])->name('settings.update');
+
+        // Kalau mau edit gym by ID (opsional)
+        Route::get('/gyms/{gym}/edit', [GymController::class, 'edit'])->name('gyms.edit');
+        Route::put('/gyms/{gym}', [GymController::class, 'update'])->name('gyms.update');
+
+        Route::post('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard.post');
+
+
         // Members
-        Route::get('/members', [UserController::class, 'index'])->name('members.index');
-        Route::get('/members/create', [UserController::class, 'create'])->name('members.create');
-        Route::post('/members', [UserController::class, 'store'])->name('members.store');
-        Route::get('/members/{member}', [UserController::class, 'show'])->name('members.show');
-        Route::get('/members/{member}/edit', [UserController::class, 'edit'])->name('members.edit');
-        Route::put('/members/{member}', [UserController::class, 'update'])->name('members.update');
-        Route::delete('/members/{member}', [UserController::class, 'destroy'])->name('members.destroy');
+        Route::resource('members', UserController::class);
 
         // Announcements
-        Route::get('/announcements', [GymInformationController::class, 'index'])->name('announcements.index');
-        Route::get('/announcements/create', [GymInformationController::class, 'create'])->name('announcements.create');
-        Route::post('/announcements', [GymInformationController::class, 'store'])->name('announcements.store');
-        Route::get('/announcements/{announcement}', [GymInformationController::class, 'show'])->name('announcements.show');
-        Route::get('/announcements/{announcement}/edit', [GymInformationController::class, 'edit'])->name('announcements.edit');
-        Route::put('/announcements/{announcement}', [GymInformationController::class, 'update'])->name('announcements.update');
-        Route::delete('/announcements/{announcement}', [GymInformationController::class, 'destroy'])->name('announcements.destroy');
+        Route::resource('announcements', GymInformationController::class);
 
         // Attendance
-        Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
-        Route::get('/attendance/create', [AttendanceController::class, 'create'])->name('attendance.create');
-        Route::post('/attendance', [AttendanceController::class, 'store'])->name('attendance.store');
-        Route::get('/attendance/{attendance}', [AttendanceController::class, 'show'])->name('attendance.show');
-        Route::get('/attendance/{attendance}/edit', [AttendanceController::class, 'edit'])->name('attendance.edit');
-        Route::put('/attendance/{attendance}', [AttendanceController::class, 'update'])->name('attendance.update');
-        Route::delete('/attendance/{attendance}', [AttendanceController::class, 'destroy'])->name('attendance.destroy');
+        Route::resource('attendance', AttendanceController::class);
 
         // Classes
-        Route::get('/classes', [ClassScheduleController::class, 'index'])->name('classes.index');
-        Route::get('/classes/create', [ClassScheduleController::class, 'create'])->name('classes.create');
-        Route::post('/classes', [ClassScheduleController::class, 'store'])->name('classes.store');
-        Route::get('/classes/{class}', [ClassScheduleController::class, 'show'])->name('classes.show');
-        Route::get('/classes/{class}/edit', [ClassScheduleController::class, 'edit'])->name('classes.edit');
-        Route::put('/classes/{class}', [ClassScheduleController::class, 'update'])->name('classes.update');
-        Route::delete('/classes/{class}', [ClassScheduleController::class, 'destroy'])->name('classes.destroy');
+        Route::resource('classes', ClassScheduleController::class);
 
         // Membership Packages
-        Route::get('/membership-packages', [MembershipPackageController::class, 'index'])->name('membership-packages.index');
-        Route::get('/membership-packages/create', [MembershipPackageController::class, 'create'])->name('membership-packages.create');
-        Route::post('/membership-packages', [MembershipPackageController::class, 'store'])->name('membership-packages.store');
-        Route::get('/membership-packages/{package}', [MembershipPackageController::class, 'show'])->name('membership-packages.show');
-        Route::get('/membership-packages/{package}/edit', [MembershipPackageController::class, 'edit'])->name('membership-packages.edit');
-        Route::put('/membership-packages/{package}', [MembershipPackageController::class, 'update'])->name('membership-packages.update');
-        Route::delete('/membership-packages/{package}', [MembershipPackageController::class, 'destroy'])->name('membership-packages.destroy');
+        Route::resource('membership-packages', MembershipPackageController::class);
 
         // Reminders
-        Route::get('/reminders', [ReminderController::class, 'index'])->name('reminders.index');
-        Route::get('/reminders/create', [ReminderController::class, 'create'])->name('reminders.create');
-        Route::post('/reminders', [ReminderController::class, 'store'])->name('reminders.store');
-        Route::get('/reminders/{reminder}', [ReminderController::class, 'show'])->name('reminders.show');
-        Route::get('/reminders/{reminder}/edit', [ReminderController::class, 'edit'])->name('reminders.edit');
-        Route::put('/reminders/{reminder}', [ReminderController::class, 'update'])->name('reminders.update');
-        Route::delete('/reminders/{reminder}', [ReminderController::class, 'destroy'])->name('reminders.destroy');
+        Route::resource('reminders', ReminderController::class);
 
         // Reports
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/export/{format}', [ReportController::class, 'export'])->name('reports.export');
 
-        // Profil Gym Admin (Settings)
-        Route::get('/settings', [GymController::class, 'edit'])->name('settings');
-        Route::put('/settings', [GymController::class, 'update'])->name('settings.update');
+        Route::get('/gyms/{gym}', [GymController::class, 'show'])->name('gyms.show');
 
-        // Create Gym
-        Route::get('/gym/create', [GymController::class, 'create'])->name('gym.create');
-        Route::post('/gym', [GymController::class, 'store'])->name('gym.store');
     });
+
+    Route::post('/gyms', [GymController::class, 'store'])->name('gyms.store');
+    Route::put('/gyms/{gym}', [GymController::class, 'update'])->name('gyms.update');
+    // List Gym (public buat member/admin)
+
+
 
     // ============================
     // 🔹 Superadmin Routes
@@ -186,4 +180,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'superadminDashboard'])->name('dashboard');
         // tambahin route superadmin lain di sini
     });
+
+        // Halaman settings gym (form edit)
+    Route::get('/admin/gyms/settings', [GymController::class, 'edit'])
+        ->name('admin.gym.settings');
+
+    // Update settings gym (form submit)
+    Route::put('/admin/gyms/settings', [GymController::class, 'update'])
+        ->name('admin.gym.settings.update');
+
+    
 });

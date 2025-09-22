@@ -53,7 +53,7 @@
 @endif
 
 <!-- Registration Form -->
-<form method="POST" action="{{ route('register') }}"
+<form method="POST" action="{{ route('register.member') }}"
 class="space-y-5">
     @csrf
 

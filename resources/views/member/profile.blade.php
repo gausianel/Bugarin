@@ -51,21 +51,21 @@
         @endif
 
         <!-- Profile Form -->
-       <form action="{{ route('member.profile.update') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
+        <form action="{{ route('member.profile.update') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
 
             <!-- Nomor HP -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Nomor HP / WhatsApp</label>
-                <input type="text" name="phone" value="{{ old('phone', $user->phone ?? '') }}"
+                <input type="text" name="phone" value="{{ old('phone', $profile->phone ?? '') }}"
                     class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-200 focus:border-indigo-500">
             </div>
 
             <!-- Tanggal Lahir -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir</label>
-                <input type="date" name="birthdate" value="{{ old('birthdate', $user->birthdate ?? '') }}"
+                <input type="date" name="birth_date" value="{{ old('birth_date', $profile->birth_date ?? '') }}"
                     class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-200 focus:border-indigo-500">
             </div>
 
@@ -74,30 +74,38 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
                 <select name="gender" class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-200 focus:border-indigo-500">
                     <option value="">-- Pilih --</option>
-                    <option value="Laki-laki" {{ old('gender', $user->gender ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                    <option value="Perempuan" {{ old('gender', $user->gender ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                    <option value="Laki-laki" {{ old('gender', $profile->gender ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                    <option value="Perempuan" {{ old('gender', $profile->gender ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                 </select>
             </div>
 
-            <!-- Alamat / Domisili -->
+            <!-- Kota -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Domisili</label>
-                <input type="text" name="address" value="{{ old('address', $user->address ?? '') }}"
-                    placeholder="Contoh: Bandung, Jawa Barat"
+                <label class="block text-sm font-medium text-gray-700 mb-1">Kota</label>
+                <input type="text" name="city" value="{{ old('city', $profile->city ?? '') }}"
+                    placeholder="Contoh: Bandung"
+                    class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-200 focus:border-indigo-500">
+            </div>
+
+            <!-- Kecamatan -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Kecamatan</label>
+                <input type="text" name="district" value="{{ old('district', $profile->district ?? '') }}"
+                    placeholder="Contoh: Coblong"
                     class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-200 focus:border-indigo-500">
             </div>
 
             <!-- Foto Profil -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Foto Profil</label>
-                <input type="file" name="avatar"
+                <input type="file" name="profile_photo"
                     class="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4
                            file:rounded-lg file:border-0 file:text-sm
                            file:font-semibold file:bg-indigo-50 file:text-indigo-700
                            hover:file:bg-indigo-100" />
-                @if(!empty($user->avatar))
+                @if(!empty($profile->profile_photo))
                     <div class="mt-2">
-                        <img src="{{ asset('storage/'.$user->avatar) }}" alt="Profile Picture"
+                        <img src="{{ asset('storage/'.$profile->profile_photo) }}" alt="Profile Picture"
                              class="h-16 w-16 rounded-full border object-cover">
                     </div>
                 @endif

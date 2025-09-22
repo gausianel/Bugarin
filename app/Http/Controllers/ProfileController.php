@@ -64,7 +64,7 @@ class ProfileController extends Controller
         ['user_id' => $user->id],
         $data
     );
-        return redirect()->route('gyms.index')->with('success', 'Profile berhasil diperbarui!');
+        return redirect()->route('member.gyms.index')->with('success', 'Profile berhasil diperbarui!');
 
     }
 
@@ -85,9 +85,26 @@ class ProfileController extends Controller
         );
 
         // Redirect ke halaman membership package gym yang dipilih
-        return redirect()->route('membership.index', $request->gym_id)
+        return redirect()->route('member.dashboard', $request->gym_id)
             ->with('success', 'Gym berhasil dipilih!');
     }
+
+    public function index()
+    {
+        $user = Auth::user();
+        $profile = $user->profile;
+
+        if (!$profile || !$profile->gym_id) {
+            return redirect()->route('member.gyms.index')
+                ->with('error', 'Silakan pilih gym terlebih dahulu.');
+        }
+
+        $gym = $profile->gym;
+        $packages = $gym->packages()->latest()->get();
+
+        return view('member.index', compact('gym', 'packages'));
+    }
+
 
 
 

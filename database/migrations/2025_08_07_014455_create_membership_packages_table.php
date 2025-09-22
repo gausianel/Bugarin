@@ -14,11 +14,17 @@ return new class extends Migration
         Schema::create('membership_packages', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('gym_id');
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete(); // cukup 1 kolom
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('package_name');
             $table->decimal('price', 10, 2);
             $table->integer('duration_days');
             $table->text('description')->nullable();
+
+            // ✅ tambahan biar query end_date ga error
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+
+            $table->boolean('is_active')->default(1);
 
             // tracking siapa yg buat
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
@@ -39,6 +45,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('membership_packages'); // perbaiki typo
+        Schema::dropIfExists('membership_packages');
     }
 };

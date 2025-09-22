@@ -35,7 +35,7 @@
                     @endif
                 </div>
             </div>
-            <a href="{{ route('member.membership') }}" class="mt-4 inline-block px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-medium text-sm text-center transition">
+            <a href="{{ route('member.membership.index') }}" class="mt-4 inline-block px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-medium text-sm text-center transition">
                 Lihat Detail Membership
             </a>
         </div>

@@ -70,32 +70,35 @@
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                <!-- Member Aktif -->
-                <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-6 transition transform hover:-translate-y-1">
-                    <h2 class="text-sm font-medium text-gray-500">Member Aktif</h2>
-                    <p class="text-3xl font-bold text-indigo-600 mt-2">{{ $activeMembers }}</p>
-                    <span class="text-xs text-gray-400">+{{ $newMembersThisMonth }} bulan ini</span>
-                </div>
-
-                <!-- Membership Expired -->
-                <a href="{{ route('admin.members.index', ['status' => 'expired']) }}"
-                   class="bg-white rounded-xl shadow-md hover:shadow-lg p-6 transition transform hover:-translate-y-1 block">
-                    <h2 class="text-sm font-medium text-gray-500">Membership Expired</h2>
-                    <p class="text-3xl font-bold text-red-600 mt-2">{{ $expiredMemberships }}</p>
-                    <span class="text-xs text-gray-400">⚠ Perlu follow-up</span>
-                </a>
-
-                <!-- Pendapatan -->
-                <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-6 transition transform hover:-translate-y-1">
-                    <h2 class="text-sm font-medium text-gray-500">Pendapatan Bulan Ini</h2>
-                    <p class="text-3xl font-bold text-green-600 mt-2">
-                        Rp {{ number_format($monthlyRevenue, 0, ',', '.') }}
-                    </p>
-                    <span class="text-xs text-gray-400">
-                        {{ $revenueGrowth > 0 ? '+' . $revenueGrowth : $revenueGrowth }}% dibanding bulan lalu
-                    </span>
-                </div>
+               <!-- Member Aktif -->
+            <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-6 transition transform hover:-translate-y-1">
+                <h2 class="text-sm font-medium text-gray-500">Member Aktif</h2>
+                <p class="text-3xl font-bold text-indigo-600 mt-2">{{ $activeMembers ?? 0 }}</p>
+                <span class="text-xs text-gray-400">+{{ $newMembersThisMonth ?? 0 }} bulan ini</span>
             </div>
+
+            <!-- Membership Expired -->
+            <a href="{{ route('admin.members.index', ['status' => 'expired']) }}"
+            class="bg-white rounded-xl shadow-md hover:shadow-lg p-6 transition transform hover:-translate-y-1 block">
+                <h2 class="text-sm font-medium text-gray-500">Membership Expired</h2>
+                <p class="text-3xl font-bold text-red-600 mt-2">{{ $expiredMemberships ?? 0}}</p>
+                <span class="text-xs text-gray-400">⚠ Perlu follow-up</span>
+            </a>
+
+            <!-- Pendapatan -->
+            <div class="bg-white rounded-xl shadow-md hover:shadow-lg p-6 transition transform hover:-translate-y-1">
+                <h2 class="text-sm font-medium text-gray-500">Pendapatan Bulan Ini</h2>
+                <p class="text-3xl font-bold text-green-600 mt-2">
+                    Rp {{ number_format($monthlyRevenue ?? 0, 0, ',', '.') }}
+                </p>
+                <span class="text-xs text-gray-400">
+                    {{ ($revenueGrowth ?? 0) > 0 ? '+' . ($revenueGrowth ?? 0) : ($revenueGrowth ?? 0) }}% dibanding bulan lalu
+                </span>
+            </div>
+
+            </div>
+
+
 
             <!-- Extra Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
@@ -105,7 +108,7 @@
                         📰 Aktivitas Terbaru
                     </h2>
                     <ul class="space-y-3 text-sm text-gray-700">
-                        @forelse($recentActivities as $activity)
+                        @forelse(($recentActivities ?? []) as $activity)
                             <li>{!! $activity['message'] !!} 
                                 <span class="text-xs text-gray-400">{{ $activity['time'] }}</span>
                             </li>
@@ -127,29 +130,32 @@
     </main>
 </div>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const ctx = document.getElementById('weeklyAttendanceChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: @json($weeklyAttendance['labels']),
-            datasets: [{
-                label: 'Absensi Harian',
-                data: @json($weeklyAttendance['data']),
-                borderColor: '#4F46E5',
-                backgroundColor: 'rgba(79,70,229,0.1)',
-                tension: 0.4,
-                fill: true,
-                pointRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true } }
-        }
-    });
-</script>
+    <!-- Chart.js -->
+    <script>
+        // fallback kalau $weeklyAttendance belum didefinisikan
+        const _weeklyAttendance = @json($weeklyAttendance ?? ['labels' => [], 'data' => []]);
+
+        const ctx = document.getElementById('weeklyAttendanceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: _weeklyAttendance.labels,
+                datasets: [{
+                    label: 'Absensi Harian',
+                    data: _weeklyAttendance.data,
+                    borderColor: '#4F46E5',
+                    backgroundColor: 'rgba(79,70,229,0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
+
 @endsection

@@ -20,7 +20,7 @@ return new class extends Migration
     $table->timestamps();
 
     $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-    $table->foreign('class_id')->references('id')->on('class_scheduled')->onDelete('cascade');
+    $table->foreign('class_id')->references('id')->on('class_schedules')->onDelete('cascade');
 
     
             // tracking siapa yg buat

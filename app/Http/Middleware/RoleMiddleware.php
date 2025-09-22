@@ -14,9 +14,19 @@ class RoleMiddleware
         }
 
         $user = Auth::user();
+        $userRole = strtolower($user->role); // ✅ selalu lowercase
 
-        // cek role user
-        if (!in_array($user->role, $roles)) {
+        // normalize role list ke lowercase juga
+        $roles = array_map('strtolower', $roles);
+
+        // Debug (lihat di storage/logs/laravel.log)
+        \Log::info('ROLE MIDDLEWARE CHECK', [
+            'user_id'       => $user->id,
+            'user_role'     => $userRole,
+            'roles_allowed' => $roles,
+        ]);
+
+        if (!in_array($userRole, $roles)) {
             abort(403, 'Unauthorized access');
         }
 

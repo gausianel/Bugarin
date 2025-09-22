@@ -11,19 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('member__gyms', function (Blueprint $table) {
+        Schema::create('gym_admins', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('member_id');
             $table->unsignedBigInteger('gym_id');
-            $table->unsignedBigInteger('package_id')->nullable();
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->string('status')->default('active');
-
-            $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
-            $table->foreign('gym_id')->references('id')->on('gyms')->onDelete('cascade');
-            $table->foreign('package_id')->references('id')->on('membership__packages')->onDelete('set null');
+            $table->unsignedBigInteger('user_id');
+            $table->string('role_in_gym');
+            $table->timestamp('assigned_at')->nullable();
             $table->timestamps();
+
+            $table->foreign('gym_id')->references('id')->on('gyms')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             
             // tracking siapa yg buat
@@ -40,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('member__gyms');
+        Schema::dropIfExists('gym__admins');
     }
 };

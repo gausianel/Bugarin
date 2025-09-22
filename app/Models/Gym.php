@@ -14,6 +14,8 @@ class Gym extends Model
         'description',
         'image',
         'user_id',
+        'created_by', // ⬅️ ini yang bener
+
     ];
 
     //1 to many packages

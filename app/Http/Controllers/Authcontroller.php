@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+
 
 class AuthController extends Controller
 {
+    // ============================
+    // 🔹 Login Umum (Member/Admin)
+    // ============================
     public function showLoginForm()
     {
         return view('auth.login');
@@ -37,48 +41,24 @@ class AuthController extends Controller
         ]);
     }
 
+    // ============================
+    // 🔹 Register Member
+    // ============================
     public function showRegisterForm()
     {
         return view('auth.register');
     }
 
-    public function register(Request $request)
-    {
-        $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        $user = User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role'     => 'member', // default role = member
-        ]);
-
-        Auth::login($user);
-
-        return redirect()->route('member.profile');
-    }
-
-    public function logout(Request $request)
-    {
-        Log::info('User logged out: ' . Auth::user()->email);
-
-        Auth::logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('/login');
-    }
-
-    // 🔹 Register Member
     public function createMember()
     {
-        return view('auth.register'); 
+        return view('auth.register'); // blade form register member
     }
+
+    public function showregister()
+    {
+        return view('member.profile');
+    }
+
 
     public function storeMember(Request $request)
     {
@@ -95,12 +75,24 @@ class AuthController extends Controller
             'role'     => 'member',
         ]);
 
+        // login & regenerate session
         Auth::login($user);
+        $request->session()->regenerate();
 
-        return redirect()->route('member.profile');
+        // Debug (sementara) — bisa dihapus nanti
+        \Log::info('User registered and logged in: id=' . $user->id . ' auth_check=' . (Auth::check() ? 'yes' : 'no'));
+
+        // redirect ke halaman daftar gym (public)
+        return redirect()->route('member.gyms.index')
+            ->with('success', 'Registrasi berhasil! Silakan pilih gym terlebih dahulu.');
     }
 
-    // 🔹 Register Gym Admin
+
+
+
+    // ============================
+    // 🔹 Register Admin Gym
+    // ============================
     public function createGym()
     {
         return view('auth.register-gym');
@@ -121,12 +113,18 @@ class AuthController extends Controller
             'role'     => 'admin',
         ]);
 
+        // ✅ auto login admin yang baru register
         Auth::login($user);
 
-        return redirect()->route('admin.gym.create');
+        // ✅ langsung ke form create gym
+        return redirect()->route('admin.gyms.create')
+            ->with('success', 'Akun admin berhasil dibuat! Silakan daftarkan gym Anda.');
     }
 
-    // 🔹 Login khusus Admin
+
+    // ============================
+    // 🔹 Login khusus Admin (opsional)
+    // ============================
     public function showAdminLoginForm()
     {
         return view('auth.login-admin');
@@ -137,12 +135,9 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email'    => 'required|email',
             'password' => 'required',
-            'gym_name' => 'required|string',
         ]);
 
-        $remember = $request->filled('remember');
-
-        if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']], $remember)) {
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
             $user = Auth::user();
 
             if ($user->role !== 'admin') {
@@ -150,27 +145,45 @@ class AuthController extends Controller
                 return back()->withErrors(['email' => 'Anda bukan admin gym.']);
             }
 
-            if ($user->gym && $user->gym->name !== $credentials['gym_name']) {
-                Auth::logout();
-                return back()->withErrors(['gym_name' => 'Nama gym tidak cocok.']);
-            }
-
             $request->session()->regenerate();
-            return redirect()->route('admin.gym.create');
+            return redirect()->route('admin.dashboard');
         }
 
         return back()->withErrors(['email' => 'Email atau password salah.']);
     }
 
-    // 🔹 Helper: redirect sesuai role
+    // ============================
+    // 🔹 Logout
+    // ============================
+    public function logout(Request $request)
+    {
+        Log::info('User logged out: ' . Auth::user()->email);
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
+    }
+
+    // ============================
+    // 🔹 Helper Redirect
+    // ============================
     private function redirectBasedOnRole($user)
     {
         if ($user->role === 'member') {
+            // cek apakah user sudah punya gym
+            if (!$user->profile || !$user->profile->gym_id) {
+                return redirect()->route('member.gyms.index')
+                    ->with('info', 'Silakan pilih gym terlebih dahulu.');
+            }
             return redirect()->route('member.dashboard');
         } elseif ($user->role === 'admin') {
-            return redirect()->route('admin.gym.create');
-        } else {
-            return redirect('/');
+            return redirect()->route('admin.dashboard');
         }
+
+        return redirect('/');
     }
+
+    
 }

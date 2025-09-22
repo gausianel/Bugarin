@@ -3,22 +3,27 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Class_Schedule extends Model
 {
+    use SoftDeletes;
+
+    protected $table = 'class_schedules';
+
     protected $fillable = [
         'gym_id',
-        'instructor_id',
         'class_name',
-        'description',
-        'day_of_week',
-        'start_time',
-        'end_time',
-        'capacity',
+        'instructor_name',
+        'day',
+        'time',
+        'quota',
+        'created_by',
+        'deleted_by',
     ];
-    //1 to many attendances
-    public function attendances()
+
+    public function gym()
     {
-        return $this->hasMany(Attendance::class, 'class_id');
+        return $this->belongsTo(Gym::class, 'gym_id');
     }
 }

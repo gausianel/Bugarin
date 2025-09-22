@@ -13,13 +13,29 @@ return new class extends Migration
     {
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->nullOnDelete();
-            $table->string('phone')->nullable();
+
+            // Relasi ke users (nullable biar bisa onDelete set null)
+            $table->foreignId('user_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            // Informasi profile
+            $table->string('full_name')->nullable();
             $table->date('birth_date')->nullable();
-            $table->enum('gender', ['Laki-laki', 'Perempuan'])->nullable();
-            $table->string('city')->nullable();
-            $table->string('profile_photo')->nullable();
+            $table->string('gender')->nullable(); // male/female/other
+            $table->string('phone')->nullable();
+            $table->text('address')->nullable();
+            $table->string('avatar')->nullable(); // path foto profil
+
             $table->timestamps();
+
+            // tracking siapa yg buat
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+
+            // soft delete + siapa yg hapus
+            $table->softDeletes();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
         });
     }
 

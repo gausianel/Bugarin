@@ -19,7 +19,7 @@
             🏋️ Profil Gym
         </h1>
 
-        <form method="POST" action="{{ route('admin.gym.settings') }}" enctype="multipart/form-data" class="space-y-2">
+        <form method="POST" action="{{ route('admin.gym.settings.update') }}" enctype="multipart/form-data" class="space-y-2">
             @csrf
             @method('PUT')
 

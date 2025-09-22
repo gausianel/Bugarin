@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gym__admins', function (Blueprint $table) {
+        Schema::create('class_schedules', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('gym_id');
-            $table->unsignedBigInteger('user_id');
-            $table->string('role_in_gym');
-            $table->timestamp('assigned_at')->nullable();
-            $table->timestamps();
-
+            $table->string('class_name');
+            $table->string('instructor_name')->nullable();
+            $table->string('day');
+            $table->time('time');
+            $table->integer('quota');
             $table->foreign('gym_id')->references('id')->on('gyms')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->timestamps();
 
             
             // tracking siapa yg buat
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gym__admins');
+        Schema::dropIfExists('class__schedules');
     }
 };

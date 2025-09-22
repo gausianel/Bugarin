@@ -11,18 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('class__schedules', function (Blueprint $table) {
+        Schema::create('member_gyms', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('member_id');
             $table->unsignedBigInteger('gym_id');
-            $table->string('class_name');
-            $table->string('instructor_name')->nullable();
-            $table->time('day');
-            $table->time('time');
-            $table->integer('quota');
+            $table->unsignedBigInteger('package_id')->nullable();
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->string('status')->default('active');
+
+            // ✅ Fix foreign keys
+            $table->foreign('member_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('gym_id')->references('id')->on('gyms')->onDelete('cascade');
+            $table->foreign('package_id')->references('id')->on('membership_packages')->onDelete('set null');
+
             $table->timestamps();
 
-            
             // tracking siapa yg buat
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
 
@@ -37,6 +41,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('class__schedules');
+        Schema::dropIfExists('member_gyms'); // ✅ Sama dengan nama di up()
     }
 };

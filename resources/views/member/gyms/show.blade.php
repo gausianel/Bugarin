@@ -49,10 +49,10 @@
             <hr class="my-8 border-gray-200">
 
         <!-- Tombol Pilih Gym -->
-    <form action="{{ route('profile.chooseGym') }}" method="POST">
+    <form action="{{ route('member.profile.chooseGym') }}" method="POST">
         @csrf
         <input type="hidden" name="gym_id" value="{{ $gym->id }}">
-        
+        a
         <button type="submit"
             class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold py-3 rounded-xl shadow-lg hover:from-blue-600 hover:to-blue-700 transition transform hover:-translate-y-0.5">
             Pilih Gym Ini
