@@ -64,26 +64,18 @@ class GymController extends Controller
     }
 
 
-    public function edit()
+    public function edit(Gym $gym)
     {
-        $admin = auth()->user();
-
-        // ambil gym sesuai admin yang login
-        $gym = Gym::where('created_by', $admin->id)->firstOrFail();
-
-        return view('admin.settings', compact('gym'));
+        return view('admin.gyms.edit', compact('gym'));
     }
 
-    public function update(Request $request)
+    public function update(Request $request, Gym $gym)
     {
-        $admin = auth()->user();
-        $gym = Gym::where('created_by', $admin->id)->firstOrFail();
-
         $validated = $request->validate([
-            'name'    => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'address' => 'required|string',
-            'logo'    => 'nullable|image|mimes:jpg,png|max:2048',
-            'banner'  => 'nullable|image|mimes:jpg,png|max:5120',
+            'logo' => 'nullable|image|mimes:jpg,png|max:2048',
+            'banner' => 'nullable|image|mimes:jpg,png|max:5120',
         ]);
 
         if ($request->hasFile('logo')) {
@@ -99,6 +91,7 @@ class GymController extends Controller
         return redirect()->route('admin.dashboard')->with('success', 'Profil gym berhasil diperbarui!');
     }
 
+
     public function destroy($id)
     {
         $gym = Gym::findOrFail($id);
@@ -106,4 +99,11 @@ class GymController extends Controller
 
         return redirect()->route('member.gyms.index')->with('success', 'Gym deleted!');
     }
+
+    public function settings()
+{
+    $gym = auth()->user()->gym; // ambil gym milik admin login
+    return view('admin.settings', compact('gym'));
+}
+
 }

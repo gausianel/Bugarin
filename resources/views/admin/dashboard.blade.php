@@ -125,6 +125,18 @@
                     </h2>
                     <canvas id="weeklyAttendanceChart" height="160"></canvas>
                 </div>
+
+                 <!-- Form Testing Manual Check-in -->
+                <form action="{{ route('admin.scan.qr.check') }}" method="POST" class="mt-6 w-full">                
+                    @csrf
+                <label class="block mb-2 text-gray-700 font-medium">Masukkan Token QR (Testing)</label>
+                <input type="text" name="token" placeholder="Paste token QR di sini"
+                    class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500" required>
+                <button type="submit"
+                    class="mt-3 w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-medium shadow-md transition">
+                    ✅ Simpan Kehadiran (Test)
+                </button>
+            </form>
             </div>
         </section>
     </main>

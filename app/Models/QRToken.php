@@ -9,6 +9,7 @@ use PhpParser\Builder\Class_;
 class QrToken extends Model
 {
     use HasFactory;
+    protected $table = 'qr_tokens';
 
     protected $fillable = [
         'user_id',

@@ -26,9 +26,15 @@ class RoleMiddleware
             'roles_allowed' => $roles,
         ]);
 
-        if (!in_array($userRole, $roles)) {
-            abort(403, 'Unauthorized access');
+       if (!in_array($userRole, $roles)) {
+        if ($userRole === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($userRole === 'member') {
+            return redirect()->route('member.dashboard');
         }
+        abort(403, 'Unauthorized access');
+    }
+
 
         return $next($request);
     }

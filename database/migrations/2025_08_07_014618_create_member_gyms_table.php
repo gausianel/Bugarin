@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('member_gyms', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('member_id');
+            $table->unsignedBigInteger('member_id')->nullable();
             $table->unsignedBigInteger('gym_id');
             $table->unsignedBigInteger('package_id')->nullable();
             $table->date('start_date');

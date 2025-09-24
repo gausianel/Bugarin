@@ -32,10 +32,13 @@ class MemberGymController extends Controller
         ]);
 
         $memberGym = Member_Gym::create([
-            'user_id' => auth()->id,
-            'membership_package_id' => $validated['package_id'],
-            // tambahkan field lain sesuai kebutuhan
+            'user_id' => auth()->id(),
+            'package_id' => $validated['package_id'],
+            'start_date' => now(),
+            'end_date' => now()->addDays(30), // contoh default 30 hari
+            'status' => 'active',
         ]);
+
 
         Payment::create([
             'member_gym_id' => $memberGym->id,
@@ -50,9 +53,10 @@ class MemberGymController extends Controller
 
     public function viewMyMembership()
     {
-        $memberships = Member_Gym::where('user_id', auth()->id)
-            ->with(['membershipPackage', 'payments'])
-            ->get();
+        $memberships = Member_Gym::where('user_id', auth()->id())
+        ->with(['package'])
+        ->get();
+
 
         return view('member_gym.my_membership', compact('memberships'));
     }

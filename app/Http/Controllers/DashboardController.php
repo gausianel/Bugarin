@@ -51,7 +51,7 @@ class DashboardController extends Controller
     $activeMembers = User::where('gym_id', $gymId)
         ->where('role', 'member')
         ->whereHas('memberships', function($q) {
-            $q->where('is_active', true);
+            $q->where('status', true);
         })
         ->count();
 
@@ -204,4 +204,6 @@ class DashboardController extends Controller
             'totalAttendance' => $totalAttendance,
         ]);
     }
+
+    
 }

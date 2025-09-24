@@ -123,33 +123,38 @@
             x-text="editing ? '✏️ Edit Jadwal Kelas' : '+ Tambah Jadwal Kelas'"></h2>
 
         <form :action="editing ? ('/admin/classes/' + form.id) : '{{ route('admin.classes.store') }}'"
-              method="POST" class="space-y-3">
-            @csrf
-            <template x-if="editing">
-                <input type="hidden" name="_method" value="PUT">
-            </template>
+      method="POST" class="space-y-3">
+    @csrf
+    <template x-if="editing">
+        <input type="hidden" name="_method" value="PUT">
+    </template>
 
-            <input type="text" name="class_name" x-model="form.class_name" placeholder="Nama Kelas"
-                   class="w-full p-2 border rounded" required>
+    <!-- 🔥 Tambahin ini -->
+    <input type="hidden" name="gym_id" 
+           value="{{ request('gym_id') ?? ($schedules->first()->gym_id ?? '') }}">
 
-            <input type="text" name="instructor_name" x-model="form.instructor_name" placeholder="Instruktur"
-                   class="w-full p-2 border rounded">
+    <input type="text" name="class_name" x-model="form.class_name" placeholder="Nama Kelas"
+           class="w-full p-2 border rounded" required>
 
-            <select name="day" x-model="form.day" class="w-full p-2 border rounded" required>
-                <option value="">Pilih Hari</option>
-                <option>Senin</option>
-                <option>Selasa</option>
-                <option>Rabu</option>
-                <option>Kamis</option>
-                <option>Jumat</option>
-                <option>Sabtu</option>
-                <option>Minggu</option>
-            </select>
+    <input type="text" name="instructor_name" x-model="form.instructor_name" placeholder="Instruktur"
+           class="w-full p-2 border rounded">
 
-            <input type="time" name="time" x-model="form.time" class="w-full p-2 border rounded" required>
+    <select name="day" x-model="form.day" class="w-full p-2 border rounded" required>
+        <option value="">Pilih Hari</option>
+        <option>Senin</option>
+        <option>Selasa</option>
+        <option>Rabu</option>
+        <option>Kamis</option>
+        <option>Jumat</option>
+        <option>Sabtu</option>
+        <option>Minggu</option>
+    </select>
 
-            <input type="number" name="quota" x-model="form.quota" placeholder="Kuota"
-                   class="w-full p-2 border rounded" min="1" required>
+    <input type="time" name="time" x-model="form.time" class="w-full p-2 border rounded" required>
+
+    <input type="number" name="quota" x-model="form.quota" placeholder="Kuota"
+           class="w-full p-2 border rounded" min="1" required>
+
 
             <!-- Tombol -->
             <div class="flex space-x-3 pt-2">
@@ -167,17 +172,18 @@
 
                 <!-- Tombol Batal -->
                 <button 
-                    type="button" 
-                    x-show="editing"
-                    @click="editing=false; form={id:'',title:'',content:'',published_at:''}"
-                    class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-red-600 
-                        text-white font-medium shadow-md 
-                        hover:from-red-600 hover:to-red-500 
-                        hover:scale-105 hover:shadow-lg 
-                        focus:ring-2 focus:ring-red-300 
-                        transition transform duration-200 ease-in-out">
-                    Batal
-                </button>
+                type="button" 
+                x-show="editing"
+                @click="resetForm()"
+                class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-red-600 
+                    text-white font-medium shadow-md 
+                    hover:from-red-600 hover:to-red-500 
+                    hover:scale-105 hover:shadow-lg 
+                    focus:ring-2 focus:ring-red-300 
+                    transition transform duration-200 ease-in-out">
+                Batal
+            </button>
+
             </div>
 
         </form>

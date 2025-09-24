@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('gym_id');
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('package_name');
+            $table->string('name',);
             $table->decimal('price', 10, 2);
-            $table->integer('duration_days');
+            $table->integer('duration');
             $table->text('description')->nullable();
 
             // ✅ tambahan biar query end_date ga error

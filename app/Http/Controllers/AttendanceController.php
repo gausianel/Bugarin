@@ -9,6 +9,8 @@ use App\Models\Class_Schedule;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
 
 class AttendanceController extends Controller
 {
@@ -117,8 +119,36 @@ class AttendanceController extends Controller
     }
 
     public function classHistory()
+    {
+        return $this->listMyAttendance(); // alias aja
+    }
+
+    public function scanCheck(Request $request)
 {
-    return $this->listMyAttendance(); // alias aja
+    $request->validate([
+        'token' => 'required|string'
+    ]);
+
+    // Token hasil QR (yang digenerate member)
+    $token = $request->token;
+
+    // Cari user dari QR Token
+    $qr = \App\Models\QrToken::where('token', $token)->first();
+
+    if (!$qr) {
+        return response()->json(['message' => 'QR tidak valid!'], 400);
+    }
+
+    // Simpan attendance
+    \App\Models\Attendance::create([
+        'user_id' => $qr->user_id,
+        'date'    => now()->toDateString(),
+        'time'    => now()->format('H:i:s'),
+        'status'  => 'Hadir',
+    ]);
+
+    return response()->json(['message' => '✅ Check-in berhasil untuk user ID '.$qr->user_id]);
 }
+
 
 }

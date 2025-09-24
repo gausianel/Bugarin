@@ -17,7 +17,7 @@ class Gym extends Model
         'created_by', // ⬅️ ini yang bener
 
     ];
-
+    
     //1 to many packages
     public function packages()
     {

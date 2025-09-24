@@ -17,7 +17,7 @@ use App\Http\Controllers\ClassScheduleController;
 use App\Http\Controllers\MembershipPackageController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\ReportController;
-use App\Models\Profile;
+use App\Http\Controllers\QrController;
 
 // ============================
 // 🟢 Guest Routes
@@ -28,18 +28,20 @@ Route::get('/maintenance', fn() => view('maintenance'))->name('maintenance');
 // 🔑 Login & Register
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
+
 Route::get('/login/admin', [AuthController::class, 'showAdminLoginForm'])->name('login.admin');
 Route::post('/login/admin', [AuthController::class, 'loginAdmin']);
 
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [AuthController::class, 'showregister']);Route::post('/register/member', [AuthController::class, 'storeMember']);
-Route::post('/register/gym', [AuthController::class, 'storeGym']);
+Route::post('/register', [AuthController::class, 'showregister']); // <- ini kayanya typo ya
 
-// Pisah Member & Gym
-Route::get('/register/member', [AuthController::class, 'createMember'])->name('register.member');
-Route::post('/register/member', [AuthController::class, 'storeMember']);
-Route::get('/register/gym', [AuthController::class, 'createGym'])->name('register.gym');
-Route::post('/register/gym', [AuthController::class, 'storeGym']);
+// Pisah Member & Gym register
+Route::prefix('register')->group(function () {
+    Route::get('/member', [AuthController::class, 'createMember'])->name('register.member');
+    Route::post('/member', [AuthController::class, 'storeMember']);
+    Route::get('/gym', [AuthController::class, 'createGym'])->name('register.gym');
+    Route::post('/gym', [AuthController::class, 'storeGym']);
+});
 
 // 🚪 Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -86,6 +88,7 @@ Route::post('/reset-password', function (Illuminate\Http\Request $request) {
         : back()->withErrors(['email' => [__($status)]]);
 })->middleware('guest')->name('password.update');
 
+
 // ============================
 // 🔒 Protected Routes
 // ============================
@@ -99,77 +102,69 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::post('/profile/choose-gym', [ProfileController::class, 'chooseGym'])->name('profile.chooseGym');
+        
         Route::get('/classes', [ClassScheduleController::class, 'index'])->name('classes');
         Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
         Route::get('/info', [GymInformationController::class, 'index'])->name('info');
-        Route::get('/qr/refresh', [DashboardController::class, 'refresh'])->name('qr.refresh');
-        Route::get('/membership', [ProfileController::class, 'index'])->name('membership.index');
+        Route::get('qr/refresh', [QrController::class, 'refresh'])->name('qr.refresh');
+       
+        // gym list buat member
+        Route::get('/gyms', [GymController::class, 'index'])->name('gyms.index');
+        Route::get('/gyms/{gym}', [GymController::class, 'show'])->name('gyms.show');
+
         
 
+        Route::post('/membership/choose/{package}', [ProfileController::class, 'choosePackage'])
+        ->name('membership.choose');
 
-        Route::get('/gyms', [GymController::class, 'index'])->name('gyms.index');
 
     });
 
-    Route::get('/gyms', [GymController::class, 'index'])->name('gyms.index');
-    Route::get('/gyms/{gym}', [GymController::class, 'show'])->name('gyms.show');
-    
-
-
+        Route::get('/membership/{gym}', [ProfileController::class, 'index'])->name('membership.index');
 
     // ============================
     // 🔹 Admin Routes
     // ============================
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
-        // Dashboard admin
         Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard');
 
-        // Gym create (pasca register pertama kali)
+        // Gyms management
         Route::get('/gyms/create', [GymController::class, 'create'])->name('gyms.create');
         Route::post('/gyms', [GymController::class, 'store'])->name('gyms.store');
         Route::get('/gyms/{gym}/edit', [GymController::class, 'edit'])->name('gyms.edit');
         Route::put('/gyms/{gym}', [GymController::class, 'update'])->name('gyms.update');
+        Route::get('/gyms/{gym}', [GymController::class, 'show'])->name('gyms.show');
 
-        // Gym Settings (khusus admin login)
-        Route::get('/settings', [GymController::class, 'edit'])->name('settings');
-        Route::put('/settings', [GymController::class, 'update'])->name('settings.update');
+        Route::get('/settings', [GymController::class, 'settings'])->name('settings');
+        Route::put('/settings', [GymController::class, 'updateSettings'])->name('settings.update');
 
-        // Kalau mau edit gym by ID (opsional)
-        Route::get('/gyms/{gym}/edit', [GymController::class, 'edit'])->name('gyms.edit');
-        Route::put('/gyms/{gym}', [GymController::class, 'update'])->name('gyms.update');
-
-        Route::post('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard.post');
-
-
-        // Members
+        // Resources
         Route::resource('members', UserController::class);
-
-        // Announcements
         Route::resource('announcements', GymInformationController::class);
-
-        // Attendance
         Route::resource('attendance', AttendanceController::class);
-
-        // Classes
         Route::resource('classes', ClassScheduleController::class);
-
-        // Membership Packages
         Route::resource('membership-packages', MembershipPackageController::class);
-
-        // Reminders
         Route::resource('reminders', ReminderController::class);
 
         // Reports
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/export/{format}', [ReportController::class, 'export'])->name('reports.export');
 
-        Route::get('/gyms/{gym}', [GymController::class, 'show'])->name('gyms.show');
+         Route::put('/gym/settings', [GymController::class, 'updateSettings'])->name('gym.settings.update');
+
+         // routes/web.php (dalam group admin)
+        Route::get('/scan-qr', fn() => view('scanProcess'))->name('scan.process');
+        
+        Route::post('/scan-qr/check', [AttendanceController::class, 'scanCheck'])->name('scan.qr.check');
+
+         Route::post('/scan-qr/check', [AttendanceController::class, 'scanCheck'])->name('scan.qr.check');
+
+
 
     });
 
-    Route::post('/gyms', [GymController::class, 'store'])->name('gyms.store');
-    Route::put('/gyms/{gym}', [GymController::class, 'update'])->name('gyms.update');
-    // List Gym (public buat member/admin)
+        Route::get('/gyms', [GymController::class, 'index'])->name('gyms.index');
+        Route::get('/gyms/{gym}', [GymController::class, 'show'])->name('gyms.show');
 
 
 
@@ -178,16 +173,6 @@ Route::middleware('auth')->group(function () {
     // ============================
     Route::prefix('superadmin')->name('superadmin.')->middleware('role:superadmin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'superadminDashboard'])->name('dashboard');
-        // tambahin route superadmin lain di sini
     });
 
-        // Halaman settings gym (form edit)
-    Route::get('/admin/gyms/settings', [GymController::class, 'edit'])
-        ->name('admin.gym.settings');
-
-    // Update settings gym (form submit)
-    Route::put('/admin/gyms/settings', [GymController::class, 'update'])
-        ->name('admin.gym.settings.update');
-
-    
 });

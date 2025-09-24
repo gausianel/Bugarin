@@ -2,36 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Class_Schedule;
 use App\Models\Gym;
+use Illuminate\Http\Request;
 
 class ClassScheduleController extends Controller
 {
-    public function index(Request $request)
+    // ✅ Tampilkan daftar kelas
+    public function index()
     {
-        $query = Class_Schedule::with('gym');
+        $schedules = Class_Schedule::with('gym')->paginate(10); // pake paginate biar rapi
+        $gyms = Gym::all(); // buat dropdown gym
 
-        // kalau mau filter berdasarkan gym_id
-        if ($request->filled('gym_id')) {
-            $query->where('gym_id', $request->gym_id);
-        }
-
-        $schedules = $query->orderByDesc('created_at')->paginate(10);
-
-        return view('admin.classes.index', compact('schedules'));
+        return view('admin.classes.index', compact('schedules', 'gyms'));
     }
 
-
-    public function create($gym_id)
-    {
-        $gym = Gym::findOrFail($gym_id);
-        return view('class_schedule.create', compact('gym'));
-    }
-
-    public function store(Request $request, $gym_id)
+    // ✅ Simpan jadwal baru
+    public function store(Request $request)
     {
         $validated = $request->validate([
+            'gym_id'          => 'required|exists:gyms,id',
             'class_name'      => 'required|string|max:255',
             'instructor_name' => 'nullable|string|max:255',
             'day'             => 'required|string',
@@ -39,26 +29,24 @@ class ClassScheduleController extends Controller
             'quota'           => 'required|integer|min:1',
         ]);
 
-        $validated['gym_id'] = $gym_id;
         Class_Schedule::create($validated);
 
-        return redirect()->route('class-schedule.index', $gym_id)
-            ->with('success', 'Class schedule created!');
+        return redirect()->route('admin.classes.index')
+            ->with('success', '✅ Jadwal kelas berhasil ditambahkan.');
     }
 
-    public function edit($gym_id, $id)
+    // ✅ Edit jadwal
+    public function edit(Class_Schedule $class)
     {
-        $gym = Gym::findOrFail($gym_id);
-        $schedule = Class_Schedule::findOrFail($id);
-
-        return view('class_schedule.edit', compact('schedule', 'gym'));
+        $gyms = Gym::all();
+        return view('admin.classes.edit', compact('class', 'gyms'));
     }
 
-    public function update(Request $request, $gym_id, $id)
+    // ✅ Update jadwal
+    public function update(Request $request, Class_Schedule $class)
     {
-        $schedule = Class_Schedule::findOrFail($id);
-
         $validated = $request->validate([
+            'gym_id'          => 'required|exists:gyms,id',
             'class_name'      => 'required|string|max:255',
             'instructor_name' => 'nullable|string|max:255',
             'day'             => 'required|string',
@@ -66,18 +54,18 @@ class ClassScheduleController extends Controller
             'quota'           => 'required|integer|min:1',
         ]);
 
-        $schedule->update($validated);
+        $class->update($validated);
 
-        return redirect()->route('class-schedule.index', $gym_id)
-            ->with('success', 'Class schedule updated!');
+        return redirect()->route('admin.classes.index')
+            ->with('success', '✅ Jadwal kelas berhasil diperbarui.');
     }
 
-    public function destroy($gym_id, $id)
+    // ✅ Hapus jadwal
+    public function destroy(Class_Schedule $class)
     {
-        $schedule = Class_Schedule::findOrFail($id);
-        $schedule->delete();
+        $class->delete();
 
-        return redirect()->route('class-schedule.index', $gym_id)
-            ->with('success', 'Class schedule deleted!');
+        return redirect()->route('admin.classes.index')
+            ->with('success', '🗑️ Jadwal kelas berhasil dihapus.');
     }
 }

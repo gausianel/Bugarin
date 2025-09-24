@@ -63,12 +63,7 @@
 
 
             <!-- Tombol Edit (jika admin) -->
-            @if(auth()->user() && auth()->user()->role === 'admin')
-                <a href="{{ route('gym.edit', $gym->id) }}" 
-                   class="mt-4 inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition">
-                    ✏️ Edit Gym
-                </a>
-            @endif
+            
         </div>
     </div>
 </div>

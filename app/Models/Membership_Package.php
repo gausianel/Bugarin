@@ -9,11 +9,13 @@ class Membership_Package extends Model
     protected $table = 'membership_packages'; // pastikan sama dengan nama tabel di database
 
     protected $fillable = [
-        'gym_id',
-        'name',
-        'price',
-        'duration',
-        'description',
+    'gym_id',
+    'name',
+    'price',
+    'duration',
+    'description',
+    'created_by',
+    'deleted_by',
     ];
 
     // 1 package bisa dipakai banyak member
@@ -28,10 +30,10 @@ class Membership_Package extends Model
         return $this->belongsTo(Gym::class, 'gym_id');
     }
 
-     public function package()
-    {
-        return $this->belongsTo(Membership_Package::class, 'package_id');
-    }
+    // public function package()
+    //{
+        //return $this->belongsTo(Membership_Package::class, 'package_id');
+    //}
 
     // Relasi ke user
     public function user()

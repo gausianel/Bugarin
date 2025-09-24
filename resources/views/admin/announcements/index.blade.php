@@ -103,59 +103,62 @@
             <h2 class="text-lg font-semibold text-gray-700 mb-4"
                 x-text="editing ? '✏️ Edit Pengumuman' : '+ Tambah Pengumuman'"></h2>
 
-            <form :action="editing ? '/admin/announcements/' + form.id : '{{ route('admin.announcements.store') }}'"
-              method="POST" class="space-y-4">
-            @csrf
-            <template x-if="editing">
-                <input type="hidden" name="_method" value="PUT">
-            </template>
+                <form :action="editing ? '/admin/announcements/' + form.id : '{{ route('admin.announcements.store') }}'"
+        method="POST" class="space-y-4">
+        @csrf
 
-            <!-- Input Judul -->
-            <input type="text" name="title" x-model="form.title"
-                   placeholder="Judul pengumuman"
-                   class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none"
-                   required>
+        <!-- Selalu ada gym_id -->
+        <input type="hidden" name="gym_id" value="1">
 
-            <!-- Input Isi -->
-            <textarea name="content" x-model="form.content"
-                      placeholder="Isi pengumuman"
-                      class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none"
-                      rows="4" required></textarea>
+        <!-- Tambahan untuk update -->
+        <template x-if="editing">
+            <input type="hidden" name="_method" value="PUT">
+        </template>
 
-            <!-- Input Tanggal -->
-            <input type="date" name="published_at" x-model="form.published_at"
-                   class="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none">
+        <!-- Input Judul -->
+        <input type="text" name="title" x-model="form.title"
+            placeholder="Judul pengumuman"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none"
+            required>
 
-            <!-- Tombol -->
-            <div class="flex space-x-3 pt-2">
-                <!-- Tombol Simpan/Update -->
-                <button 
-                    class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 
-                        text-white font-medium shadow-md 
-                        hover:from-blue-700 hover:to-blue-600 
-                        hover:scale-105 hover:shadow-lg 
-                        focus:ring-2 focus:ring-blue-300 
-                        transition transform duration-200 ease-in-out"
-                    x-text="editing ? 'Update' : 'Simpan'">
-                    Kirim
-                </button>
+        <!-- Input Isi -->
+        <textarea name="content" x-model="form.content"
+                placeholder="Isi pengumuman"
+                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none"
+                rows="4" required></textarea>
 
-                <!-- Tombol Batal -->
-                <button 
-                    type="button" 
-                    x-show="editing"
-                    @click="editing=false; form={id:'',title:'',content:'',published_at:''}"
-                    class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-red-600 
-                        text-white font-medium shadow-md 
-                        hover:from-red-600 hover:to-red-500 
-                        hover:scale-105 hover:shadow-lg 
-                        focus:ring-2 focus:ring-red-300 
-                        transition transform duration-200 ease-in-out">
-                    Batal
-                </button>
-            </div>
+        <!-- Input Tanggal -->
+        <input type="date" name="published_at" x-model="form.published_at"
+            class="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none">
 
-        </form>
+        <!-- Tombol -->
+        <div class="flex space-x-3 pt-2">
+            <button 
+                class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 
+                    text-white font-medium shadow-md 
+                    hover:from-blue-700 hover:to-blue-600 
+                    hover:scale-105 hover:shadow-lg 
+                    focus:ring-2 focus:ring-blue-300 
+                    transition transform duration-200 ease-in-out"
+                x-text="editing ? 'Update' : 'Simpan'">
+                Kirim
+            </button>
+
+            <button 
+                type="button" 
+                x-show="editing"
+                @click="editing=false; form={id:'',title:'',content:'',published_at:''}"
+                class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-red-600 
+                    text-white font-medium shadow-md 
+                    hover:from-red-600 hover:to-red-500 
+                    hover:scale-105 hover:shadow-lg 
+                    focus:ring-2 focus:ring-red-300 
+                    transition transform duration-200 ease-in-out">
+                Batal
+            </button>
+        </div>
+    </form>
+
     </div>
 
     <!-- Tabel Pengumuman -->
@@ -175,10 +178,12 @@
                     <td class="px-6 py-3 text-gray-600">{{ $a->published_at ?? '-' }}</td>
                     <td class="px-6 py-3 flex space-x-2">
                         <!-- Tombol Edit -->
-                        <button @click="editing=true; form={id:'{{ $a->id }}',title:'{{ $a->title }}',content:`{{ $a->content }}`,published_at:'{{ $a->published_at }}'}"
-                                class="px-4 py-1.5 bg-yellow-400 hover:bg-yellow-500 text-white rounded-lg text-sm transition">
-                            Edit
-                        </button>
+                        <button 
+                        @click="editing=true; form={id:'{{ $a->id }}',title:'{{ $a->title }}',content:`{{ $a->content }}`,published_at:'{{ $a->published_at }}'}"
+                        class="px-4 py-1.5 bg-yellow-400 hover:bg-yellow-500 text-white rounded-lg text-sm transition">
+                        Edit
+                    </button>
+
 
                         <!-- Tombol Hapus -->
                         <form method="POST" action="{{ route('admin.announcements.destroy', $a) }}">

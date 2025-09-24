@@ -33,13 +33,18 @@ class GymInformationController extends Controller
     // 🔹 Simpan pengumuman baru
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'gym_id'  => 'required|exists:gyms,id',
             'title'   => 'required|string|max:255',
             'content' => 'required|string',
+
         ]);
 
+        $validated['created_by'] = auth()->id(); 
         Gym_Information::create($validated);
+
+        
 
         return redirect()->route('admin.announcements.index')
                          ->with('success', 'Pengumuman berhasil ditambahkan!');
@@ -80,9 +85,10 @@ class GymInformationController extends Controller
     public function destroy($id)
     {
         $announcement = Gym_Information::findOrFail($id);
+        $announcement->update(['deleted_by' => Auth::id()]);
         $announcement->delete();
 
         return redirect()->route('admin.announcements.index')
-                         ->with('success', 'Pengumuman berhasil dihapus!');
+                        ->with('success', 'Pengumuman berhasil dihapus!');
     }
 }

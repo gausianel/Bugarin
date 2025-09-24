@@ -97,6 +97,6 @@ class User extends Authenticatable
     // 🔹 Relasi: user punya banyak membership
     public function memberships()
     {
-        return $this->hasMany(Membership_Package::class, 'user_id');
+        return $this->hasMany(Member_Gym::class, 'user_id');
     }
 }
