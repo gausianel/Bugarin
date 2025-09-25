@@ -15,7 +15,7 @@ class Profile extends Model
         'phone',
         'birth_date',
         'gender',
-        'city',
+        'address',
         'profile_photo',
     ];
 

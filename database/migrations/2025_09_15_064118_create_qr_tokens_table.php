@@ -13,6 +13,10 @@ return new class extends Migration {
             $table->string('token' , 64)->unique();
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
+
+            $table->foreignId('class_id')->nullable()->constrained('class_schedules')->onDelete('cascade');
+            
+
         });
     }
 

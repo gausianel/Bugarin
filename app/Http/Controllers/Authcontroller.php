@@ -83,7 +83,7 @@ class AuthController extends Controller
             'role'  => $user->role,
         ]);
 
-        return redirect()->route('member.gyms.index')
+        return redirect()->route('member.profile')
             ->with('success', 'Registrasi berhasil! Silakan pilih gym terlebih dahulu.');
     }
 
@@ -154,7 +154,7 @@ class AuthController extends Controller
 
         if ($role === 'member') {
             if (!$user->profile || !$user->profile->gym_id) {
-                return redirect()->route('member.gyms.index')
+                return redirect()->route('member.dashboard')
                     ->with('info', 'Silakan pilih gym terlebih dahulu.');
             }
             return redirect()->route('member.dashboard');

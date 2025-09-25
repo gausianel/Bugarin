@@ -40,8 +40,7 @@ class ProfileController extends Controller
             'phone'         => 'nullable|string|max:20',
             'birth_date'    => 'nullable|date',
             'gender'        => 'nullable|in:Laki-laki,Perempuan',
-            'city'          => 'nullable|string|max:100',
-            'district'      => 'nullable|string|max:100',
+            'address'          => 'nullable|string|max:100',
             'profile_photo' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 

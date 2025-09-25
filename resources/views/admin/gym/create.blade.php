@@ -25,10 +25,14 @@
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Gym</label>
                 <input type="text" 
                     name="name" 
-                    value="{{ old('name', $gym->name ?? '') }}"
-                    class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                    placeholder="Masukkan nama gym">
+                    value="{{ old('name', Auth::user()->name) }}"
+                    class="w-full px-4 py-3 border rounded-lg bg-gray-100 text-gray-600 
+                        focus:ring-0 focus:border-gray-300 cursor-not-allowed"
+                    placeholder="Masukkan nama gym"
+                    readonly>
             </div>
+
+
 
             <!-- Alamat -->
             <div>

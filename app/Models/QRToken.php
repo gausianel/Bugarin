@@ -18,7 +18,7 @@ class QrToken extends Model
         'expires_at',
     ];
 
-    protected $dates = ['expired_at'];
+    protected $dates = ['expires_at'];
 
     public function class_schedule()
     {

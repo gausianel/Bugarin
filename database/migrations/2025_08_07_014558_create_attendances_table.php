@@ -15,7 +15,7 @@ return new class extends Migration
         $table->id();
 
         // Relasi ke class_schedules
-        $table->foreignId('class_id')
+        $table->foreignId('class_id')->nullable()
             ->constrained('class_schedules')
             ->onDelete('cascade');
 

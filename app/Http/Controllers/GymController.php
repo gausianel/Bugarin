@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 
 
+
 class GymController extends Controller
 {
     public function index(Request $request)
@@ -33,8 +34,10 @@ class GymController extends Controller
 
     public function create()
     {
-        return view('admin.gym.create');
+        $user = Auth::user(); // ambil user login (admin yang baru register)
+        return view('admin.gym.create', compact('user'));
     }
+
 
     public function store(Request $request)
     {
@@ -101,9 +104,10 @@ class GymController extends Controller
     }
 
     public function settings()
-{
-    $gym = auth()->user()->gym; // ambil gym milik admin login
-    return view('admin.settings', compact('gym'));
-}
+    {
+        $gym = Gym::where('created_by', auth()->id())->first(); 
+        return view('admin.settings', compact('gym'));
+    }
+
 
 }

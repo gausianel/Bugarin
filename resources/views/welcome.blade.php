@@ -130,9 +130,9 @@
                 <p class="text-gray-600 mt-2">Pantau status dan perpanjangan member dengan cepat.</p>
             </div>
             <div class="bg-white shadow rounded-lg p-8 text-center hover:shadow-xl transition scroll-animate">
-                <span class="text-5xl">📊</span>
-                <h3 class="text-2xl font-bold mt-4">Laporan</h3>
-                <p class="text-gray-600 mt-2">Analisis performa gym Anda setiap bulan.</p>
+                <span class="text-5xl">📝</span>
+                <h3 class="text-2xl font-bold mt-4">Scan Qr Absen</h3>
+                <p class="text-gray-600 mt-2">Absen dengan mudah menggunakan QR code.</p>
             </div>
         </div>
     </section>
@@ -165,45 +165,55 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-blue-700 text-white pt-16 pb-8">
-        <div class="max-w-6xl mx-auto px-8 grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div>
-                <h1 class="text-2xl font-bold mb-4">Bugarin</h1>
-                <p class="text-gray-300 mb-4">Kelola gym Anda dengan mudah, pantau jadwal, dan hadirkan pengalaman terbaik untuk member.</p>
-                <div class="flex space-x-4 text-xl">
-                    <a href="#" class="hover:text-blue-400">🌐</a>
-                    <a href="#" class="hover:text-blue-400">🐦</a>
-                    <a href="#" class="hover:text-blue-400">📘</a>
-                </div>
-            </div>
-            <div>
-                <h3 class="text-xl font-semibold mb-4">Contact Info</h3>
-                <ul class="space-y-3 text-gray-300">
-                    <li class="flex items-center space-x-3"><span>📍</span><span>Jl. Fitness No. 123, Jakarta</span></li>
-                    <li class="flex items-center space-x-3"><span>📧</span><span>support@bugarin.com</span></li>
-                    <li class="flex items-center space-x-3"><span>📞</span><span>+62 812-3456-7890</span></li>
-                </ul>
-            </div>
-            <div>
-                <h3 class="text-xl font-semibold mb-4">Stay Connected</h3>
-                <p class="text-gray-300 mb-4">Dapatkan tips fitness, promo, dan info terbaru langsung di email Anda.</p>
-                <form class="flex items-center">
-                    <input type="email" placeholder="Masukkan email" class="w-full px-4 py-2 rounded-l-lg text-gray-800 focus:outline-none">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-r-lg font-semibold">Kirim</button>
-                </form>
-                <div class="flex space-x-6 text-2xl mt-6">
-                    <a href="#" class="hover:text-pink-500 transition-colors duration-300"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="hover:text-blue-400 transition-colors duration-300"><i class="fa-regular fa-envelope"></i></a>
-                    <a href="#" class="hover:text-green-400 transition-colors duration-300"><i class="fa-brands fa-whatsapp"></i></a>
-                </div>
+   <!-- Footer -->
+<footer class="bg-blue-700 text-white pt-16 pb-8">
+    <div class="max-w-6xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-12">
+        
+        <!-- Kolom Kiri -->
+        <div>
+            <h3 class="text-2xl font-semibold mb-4">Contact Info</h3>
+            <ul class="space-y-3 text-gray-300 text-lg leading-relaxed">
+                <li class="flex items-center space-x-3">
+                    <span>📍</span><span>Jl. Fitness No. 123, Jakarta</span>
+                </li>
+                <li class="flex items-center space-x-3">
+                    <span>📧</span><span>support@bugarin.com</span>
+                </li>
+                <li class="flex items-center space-x-3">
+                    <span>📞</span><span>+62 812-3456-7890</span>
+                </li>
+            </ul>
+        </div>
+
+
+        <!-- Kolom Kanan -->
+        <div>
+            <h3 class="text-xl font-semibold mb-4">Stay Connected</h3>
+            <p class="text-gray-300 mb-4">Dapatkan tips fitness, promo, dan info terbaru langsung di email Anda.</p>
+            
+            <form class="flex items-center">
+                <input type="email" placeholder="Masukkan email" 
+                       class="w-full px-4 py-2 rounded-l-lg text-gray-800 focus:outline-none">
+                <button type="submit" 
+                        class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-r-lg font-semibold">
+                    Kirim
+                </button>
+            </form>
+
+            <div class="flex space-x-6 text-2xl mt-6">
+                <a href="#" class="hover:text-pink-500 transition-colors duration-300"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:text-blue-400 transition-colors duration-300"><i class="fa-regular fa-envelope"></i></a>
+                <a href="#" class="hover:text-green-400 transition-colors duration-300"><i class="fa-brands fa-whatsapp"></i></a>
             </div>
         </div>
-        <div class="mt-10 border-t border-blue-700 pt-6 text-center text-white text-sm">
-            © {{ date('Y') }} Bugarin. All rights reserved.
-        </div>
-    </footer>
-  </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="mt-10 border-t border-blue-600 pt-6 text-center text-white text-sm">
+        © {{ date('Y') }} Bugarin. All rights reserved.
+    </div>
+</footer>
+    </div>
 
   <!-- 🔹 Script Loading + Scroll Animation + Dropdown Toggle -->
   <script>
