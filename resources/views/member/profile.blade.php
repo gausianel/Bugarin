@@ -2,7 +2,7 @@
 
 @section('title', 'Profile Member')
 
-@section('name', 'content')
+@section('content')
 
 <style>
     @keyframes fadeSlideUp {
@@ -26,11 +26,10 @@
 
         <!-- Header -->
         <div class="text-center mb-6">
-            <div class="w-14 h-14 mx-auto mb-3 flex items-center justify-center">
-                <h1 class="text-4xl font-extrabold text-indigo-600">Bugarin</h1>
-                <i class="fas fa-user text-indigo-600 text-3xl"></i>
-            </div>
-            <h1 class="text-2xl font-semibold text-gray-800">Member Profile</h1>
+            <h1 class="text-4xl font-extrabold text-indigo-600 inline-flex items-center gap-2">
+                Bugarin <i class="fas fa-user text-indigo-600 text-3xl"></i>
+            </h1>
+            <h2 class="text-2xl font-semibold text-gray-800 mt-2">Member Profile</h2>
             <p class="text-sm text-gray-500">Lengkapi data diri kamu</p>
         </div>
 
@@ -51,7 +50,7 @@
         @endif
 
         <!-- Profile Form -->
-        <form action="{{ route('member.profile.update') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('member.profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf
             @method('PUT')
 
@@ -79,10 +78,11 @@
                 </select>
             </div>
 
-            <!-- Ganti "city" jadi "address" -->
+            <!-- Alamat -->
             <div>
-                <label>Alamat</label>
-                <textarea name="address">{{ old('address', $profile->address ?? '') }}</textarea>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                <textarea name="address" rows="3"
+                    class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-200 focus:border-indigo-500">{{ old('address', $profile->address ?? '') }}</textarea>
             </div>
 
             <!-- Foto Profil -->
@@ -111,3 +111,5 @@
         </form>
     </div>
 </div>
+
+@endsection

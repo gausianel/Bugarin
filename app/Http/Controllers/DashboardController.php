@@ -63,17 +63,16 @@ class DashboardController extends Controller
         ->count();
 
     // Membership expired
+        // Membership expired
     $expiredMemberships = Membership_Package::whereHas('user', function($q) use ($gymId) {
-        $q->where('gym_id', $gymId)
-          ->where('role', 'member');
+        $q->where('gym_id', $gymId)->where('role', 'member');
     })
     ->where('end_date', '<', now())
     ->count();
 
     // Pendapatan bulan ini
     $currentMonthRevenue = Membership_Package::whereHas('user', function($q) use ($gymId) {
-        $q->where('gym_id', $gymId)
-          ->where('role', 'member');
+        $q->where('gym_id', $gymId)->where('role', 'member');
     })
     ->whereMonth('start_date', now()->month)
     ->whereYear('start_date', now()->year)
@@ -81,12 +80,12 @@ class DashboardController extends Controller
 
     // Pendapatan bulan sebelumnya
     $previousMonthRevenue = Membership_Package::whereHas('user', function($q) use ($gymId) {
-        $q->where('gym_id', $gymId)
-          ->where('role', 'member');
+        $q->where('gym_id', $gymId)->where('role', 'member');
     })
     ->whereMonth('start_date', now()->subMonth()->month)
     ->whereYear('start_date', now()->subMonth()->year)
     ->sum('price');
+
 
     // Hitung growth (%)
     $revenueGrowth = $previousMonthRevenue > 0

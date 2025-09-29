@@ -10,11 +10,20 @@ use App\Models\Gym;
 class GymAdminController extends Controller
 {
     // 🔹 List semua admin gym
-    public function index()
-    {
-        $gym = Gym_Admin::with(['gym', 'user'])->paginate(10);
-        return view('admin.settings', compact('gym'));
+   public function index()
+{
+    $admin = auth()->user(); // admin yang login
+    $gym = $admin->gym;      // gym milik admin
+
+    if (!$gym) {
+        return back()->with('error', 'Anda belum terhubung ke gym manapun.');
     }
+
+    $members = $gym->members()->paginate(10); // paginator// ambil semua member di gym itu
+
+    return view('admin.members.index', compact('gym', 'members'));
+}
+
 
     // 🔹 Assign admin ke gym
     public function assignAdminToGym(Request $request)
@@ -131,4 +140,21 @@ class GymAdminController extends Controller
 
         return redirect()->route('admin.settings')->with('success', 'Profil Gym berhasil diperbarui!');
     }
+
+        // 🔹 List semua member di gym admin yang login
+    public function member()
+    {
+        $user = auth()->user();
+
+        $gym = $user->gym;
+        if (!$gym) {
+            return back()->with('error', 'Anda belum punya gym.');
+        }
+
+        $members = $gym->members()->paginate(10);
+
+        return view('admin.members.index', compact('gym', 'members'));
+    }
+
+
 }

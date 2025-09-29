@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Gym_Admin;
+use App\Models\Gym;
 
 class UserController extends Controller
 {
@@ -62,6 +64,15 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(['message' => 'User deleted successfully']);
+    }
+
+    public function index()
+    {
+        $members = User::where('role', 'member')->paginate(10);
+        return view('admin.members.index', [
+            'members' => $members,
+            'gym' => null // atau bisa ambil gym jika ingin
+        ]);
     }
 
     

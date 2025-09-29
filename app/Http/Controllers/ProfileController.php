@@ -150,11 +150,18 @@ class ProfileController extends Controller
         ));
     }
 
+    public function edit()
+    {
+        $user = Auth::user();
+        $profile = $user->profile;
 
+        if (!$profile) {
+            $profile = new Profile();
+            $profile->user_id = $user->id;
+            $profile->save();
+        }
 
-
-
-
-
+        return view('member.edit-profile', compact('user', 'profile'));
+    }
 
 }

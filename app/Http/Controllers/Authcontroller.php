@@ -106,6 +106,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
+        // 1. Buat user admin
         $user = User::create([
             'name'     => $data['name'],
             'email'    => $data['email'],
@@ -113,18 +114,30 @@ class AuthController extends Controller
             'role'     => 'admin',
         ]);
 
+        // 2. Login otomatis
         Auth::login($user);
         $request->session()->regenerate();
 
-        Log::info('Admin registered & logged in', [
-            'id'    => $user->id,
-            'email' => $user->email,
-            'role'  => $user->role,
+        // 3. Buat gym default langsung setelah admin terdaftar
+        $gym = \App\Models\Gym::create([
+            'name'        => "Gym " . $user->name, // bisa diset default pakai nama admin
+            'address'     => 'Alamat belum diisi',
+            'description' => 'Deskripsi gym belum diisi',
         ]);
 
-        return redirect()->route('admin.gyms.create')
-            ->with('success', 'Akun admin berhasil dibuat! Silakan daftarkan gym Anda.');
+        // 4. Hubungkan user admin ke gym barunya
+        $user->gym_id = $gym->id;
+        $user->save();
+
+        Log::info('Admin registered & gym created', [
+            'admin_id' => $user->id,
+            'gym_id'   => $gym->id,
+        ]);
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Akun admin & gym berhasil dibuat!');
     }
+
 
     // ============================
     // 🔹 Logout

@@ -1,4 +1,4 @@
-@extends('layouts.guest')
+@extends('layouts.admin')
 
 @section('title', 'Absensi')
 
@@ -30,6 +30,11 @@
                class="flex items-center space-x-3 p-3 rounded-lg transition {{ request()->routeIs('admin.classes.*') ? 'bg-indigo-100 text-indigo-600 font-semibold' : 'text-gray-700 hover:bg-indigo-50' }}">
                 <span>📚</span><span>Kelas</span>
             </a>
+
+            <a href="{{ route('admin.members.index') }}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-50 transition {{ request()->routeIs('admin.members.index*') ? 'bg-indigo-100 text-indigo-600 font-semibold' : 'text-gray-700' }}">
+                <span>👥</span><span>Members</span>
+            </a>
+
             <a href="{{ route('admin.membership-packages.index') }}"
                class="flex items-center space-x-3 p-3 rounded-lg transition {{ request()->routeIs('admin.membership-packages.*') ? 'bg-indigo-100 text-indigo-600 font-semibold' : 'text-gray-700 hover:bg-indigo-50' }}">
                 <span>📦</span><span>Paket Membership</span>
@@ -47,7 +52,7 @@
             <!-- ⚙️ Settings -->
             <a href="{{ route('admin.settings') }}"
                class="flex items-center space-x-3 p-3 rounded-lg transition {{ request()->routeIs('admin.settings') ? 'bg-indigo-100 text-indigo-600 font-semibold' : 'text-gray-700 hover:bg-indigo-50' }}">
-                <span>⚙️</span><span>Settings</span>
+                <span>🏋️</span><span>Profil Gym</span>
             </a>
         </nav>
 
@@ -99,7 +104,9 @@
                         @forelse($attendances as $attendance)
                             <tr class="hover:bg-indigo-50 transition">
                                 <td class="p-4 text-gray-700 font-medium">{{ $attendance->user->name }}</td>
-                                <td class="p-4 text-gray-600">{{ $attendance->check_in_time->format('H:i') }}</td>
+                               <td class="p-4 text-gray-600">
+                                    {{ \Carbon\Carbon::parse($attendance->check_in_time)->format('H:i') }}
+                                </td>
                                 <td class="p-4">
                                     <span class="px-3 py-1 inline-flex items-center text-sm font-medium rounded-full bg-green-100 text-green-700">
                                         ✅ Hadir

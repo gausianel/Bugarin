@@ -18,6 +18,8 @@
     use App\Http\Controllers\ReminderController;
     use App\Http\Controllers\ReportController;
     use App\Http\Controllers\QrController;
+    use App\Http\Controllers\GymAdminController;
+    use App\Http\Controllers\RoleController;
 
     // ============================
     // 🟢 Guest Routes
@@ -112,10 +114,16 @@
             Route::get('/gyms', [GymController::class, 'index'])->name('gyms.index');
             Route::get('/gyms/{gym}', [GymController::class, 'show'])->name('gyms.show');
 
-            
+            Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit'); // form edit // form edit
+
+
+
 
             Route::post('/membership/choose/{package}', [ProfileController::class, 'choosePackage'])
             ->name('membership.choose');
+
+           
+
 
 
         });
@@ -138,6 +146,9 @@
             Route::get('/settings', [GymController::class, 'settings'])->name('settings');
             Route::put('/settings', [GymController::class, 'updateSettings'])->name('settings.update');
 
+            Route::get('/members', [GymAdminController::class, 'member'])->name('members.index');
+
+
             // Resources
             Route::resource('members', UserController::class);
             Route::resource('announcements', GymInformationController::class);
@@ -156,6 +167,11 @@
             Route::post('/scan-qr', fn() => view('scan'))->name('scan.process');
             
             Route::post('/scan-qr/check', [AttendanceController::class, 'scanCheck'])->name('scan.qr.check');
+
+           
+
+             //Route::get('/members', [GymAdminController::class, 'member'])->name('members.index');
+
 
            
 

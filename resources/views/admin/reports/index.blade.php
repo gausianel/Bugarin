@@ -23,6 +23,11 @@
             <a href="{{ route('admin.classes.index') }}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-50 transition {{ request()->routeIs('admin.classes.*') ? 'bg-indigo-100 text-indigo-600 font-semibold' : 'text-gray-700' }}">
                 <span>📚</span><span>Kelas</span>
             </a>
+
+            <a href="{{ route('admin.members.index') }}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-50 transition {{ request()->routeIs('admin.members.index*') ? 'bg-indigo-100 text-indigo-600 font-semibold' : 'text-gray-700' }}">
+                <span>👥</span><span>Members</span>
+            </a>
+
             <a href="{{ route('admin.membership-packages.index') }}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-50 transition {{ request()->routeIs('admin.membership-packages.*') ? 'bg-indigo-100 text-indigo-600 font-semibold' : 'text-gray-700' }}">
                 <span>📦</span><span>Paket Membership</span>
             </a>
@@ -33,7 +38,7 @@
             <div class="-mx-4"><hr class="border-gray-300"></div>
 
             <a href="{{ route('admin.settings') }}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-50 transition {{ request()->routeIs('admin.settings') ? 'bg-indigo-100 text-indigo-600 font-semibold' : 'text-gray-700' }}">
-                <span>⚙️</span><span>Settings</span>
+                <span>🏋️</span><span>Profil Gym</span>
             </a>
         </nav>
 

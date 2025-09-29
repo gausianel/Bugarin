@@ -35,4 +35,20 @@ class Gym extends Model
     {
         return $this->hasMany(Class_Schedule::class, 'gym_id');
     }
+
+    // App\Models\Gym.php
+   // Gym punya banyak member (user dengan role member)
+    public function members()
+    {
+        return $this->hasMany(User::class, 'gym_id')->where('role', 'member');
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'gym_id');
+    }
+
+
+
+
 }

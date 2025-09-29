@@ -99,4 +99,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Member_Gym::class, 'user_id');
     }
+
+    public function gymAdmin()
+    {
+        return $this->hasOne(\App\Models\Gym_Admin::class, 'user_id');
+    }
+
+     
+
+
 }

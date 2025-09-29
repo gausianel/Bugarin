@@ -1,4 +1,4 @@
-@extends('layouts.guest')
+@extends('layouts.admin')
 
 @section('title', 'Paket Membership')
 
@@ -44,6 +44,11 @@
                {{ request()->routeIs('admin.classes.*') ? 'bg-indigo-100 text-indigo-600 font-semibold' : 'text-gray-700' }}">
                 <span>📚</span><span>Kelas</span>
             </a>
+
+            <a href="{{ route('admin.members.index') }}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-50 transition {{ request()->routeIs('admin.members.index*') ? 'bg-indigo-100 text-indigo-600 font-semibold' : 'text-gray-700' }}">
+                <span>👥</span><span>Members</span>
+            </a>
+
             <a href="{{ route('admin.membership-packages.index') }}" 
                class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-50 transition 
                {{ request()->routeIs('admin.membership-packages.*') ? 'bg-indigo-100 text-indigo-600 font-semibold' : 'text-gray-700' }}">
@@ -58,7 +63,7 @@
             <a href="{{ route('admin.settings') }}" 
                class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-50 transition 
                {{ request()->routeIs('admin.settings') ? 'bg-indigo-100 text-indigo-600 font-semibold' : 'text-gray-700' }}">
-                <span>⚙️</span><span>Settings</span>
+                <span>🏋️</span><span>Profil Gym</span>
             </a>
         </nav>
 
@@ -120,18 +125,38 @@
                     @endforeach
                 </select>
 
+                <!-- Tombol -->
                 <div class="flex space-x-3 pt-2">
-                    <button class="px-6 py-2 rounded bg-blue-600 text-white hover:bg-blue-700" 
-                            x-text="editing ? 'Update' : 'Simpan'">Kirim</button>
-                    <button type="button" 
-                            x-show="editing" 
-                            @click="resetForm()" 
-                            class="px-6 py-2 rounded bg-red-500 text-white hover:bg-red-600">
-                        Batal
+                    <!-- Tombol Simpan/Update -->
+                    <button 
+                        class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 
+                            text-white font-medium shadow-md 
+                            hover:from-blue-700 hover:to-blue-600 
+                            hover:scale-105 hover:shadow-lg 
+                            focus:ring-2 focus:ring-blue-300 
+                            transition transform duration-200 ease-in-out"
+                        x-text="editing ? 'Update' : 'Simpan'">
+                        Kirim
                     </button>
+
+                    <!-- Tombol Batal -->
+                    <button 
+                    type="button" 
+                    x-show="editing"
+                    @click="resetForm()"
+                    class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-red-600 
+                        text-white font-medium shadow-md 
+                        hover:from-red-600 hover:to-red-500 
+                        hover:scale-105 hover:shadow-lg 
+                        focus:ring-2 focus:ring-red-300 
+                        transition transform duration-200 ease-in-out">
+                    Batal
+                </button>
+
                 </div>
             </form>
         </div>
+
 
         <!-- Tabel Paket -->
         <div class="bg-white rounded-lg shadow overflow-hidden">

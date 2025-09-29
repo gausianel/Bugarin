@@ -12,10 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
+            if (!Schema::hasColumn('users', 'gym_id')) {
+                $table->unsignedBigInteger('gym_id')->nullable()->after('role');
 
-            $table->unsignedBigInteger('gym_id')->nullable()->after('role');
-            $table->foreign('gym_id')->references('id')->on('gyms')->onDelete('cascade');
-            //
+                // kalau gym dihapus → gym_id jadi NULL, user nggak ikut kehapus
+                $table->foreign('gym_id')
+                      ->references('id')
+                      ->on('gyms')
+                      ->nullOnDelete();
+            }
         });
     }
 
@@ -25,10 +30,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-
-            $table->dropForeign(['gym_id']);
-            $table->dropColumn('gym_id');
-            //
+            if (Schema::hasColumn('users', 'gym_id')) {
+                $table->dropForeign(['gym_id']);
+                $table->dropColumn('gym_id');
+            }
         });
     }
 };
+    

@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('district')->nullable();
             $table->string('profile_photo')->nullable(); // opsional
+            
 
             $table->rememberToken();
             $table->timestamps();
@@ -45,6 +46,7 @@ return new class extends Migration
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
+            
         });
     }
 
