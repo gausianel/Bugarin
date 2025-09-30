@@ -11,7 +11,7 @@ class Member_Gym extends Model
 
     protected $table = 'member_gyms'; // ⚡ pastikan ini
     protected $fillable = [
-        'user_id',
+        'member_id',
         'gym_id',
         'package_id',
         'start_date',
@@ -21,7 +21,7 @@ class Member_Gym extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'member_id');
     }
 
     public function package()
@@ -38,6 +38,10 @@ class Member_Gym extends Model
 {
     return $this->hasMany(Payment::class, 'member_gym_id');
 }
+
+
+
+
 
 }
 

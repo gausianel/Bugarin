@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Gym;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -96,47 +97,49 @@ class AuthController extends Controller
     }
 
     // ============================
-    // 🔹 Register Admin
+    // 🔹 Register Admin + Gym
     // ============================
     public function storeGym(Request $request)
-    {
-        $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+{
+    $data = $request->validate([
+        'name'     => 'required|string|max:255',
+        'email'    => 'required|email|unique:users',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
 
-        // 1. Buat user admin
-        $user = User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role'     => 'admin',
-        ]);
+    // 1. Buat user admin
+    $user = User::create([
+        'name'     => $data['name'],
+        'email'    => $data['email'],
+        'password' => Hash::make($data['password']),
+        'role'     => 'admin',
+    ]);
 
-        // 2. Login otomatis
-        Auth::login($user);
-        $request->session()->regenerate();
+    // 2. Login otomatis
+    Auth::login($user);
+    $request->session()->regenerate();
 
-        // 3. Buat gym default langsung setelah admin terdaftar
-        $gym = \App\Models\Gym::create([
-            'name'        => "Gym " . $user->name, // bisa diset default pakai nama admin
-            'address'     => 'Alamat belum diisi',
-            'description' => 'Deskripsi gym belum diisi',
-        ]);
+    // 3. Buat gym default (kosong dulu)
+    $gym = Gym::create([
+    'name'        => "Gym " . $user->name,
+    'address'     => 'Alamat belum diisi',
+    'description' => 'Deskripsi gym belum diisi',
+]);
 
-        // 4. Hubungkan user admin ke gym barunya
-        $user->gym_id = $gym->id;
-        $user->save();
 
-        Log::info('Admin registered & gym created', [
-            'admin_id' => $user->id,
-            'gym_id'   => $gym->id,
-        ]);
+    // 4. Hubungkan user admin ke gym barunya
+    $user->gym_id = $gym->id;
+    $user->save();
 
-        return redirect()->route('admin.dashboard')
-            ->with('success', 'Akun admin & gym berhasil dibuat!');
-    }
+    Log::info('Admin registered & gym created', [
+        'admin_id' => $user->id,
+        'gym_id'   => $gym->id,
+    ]);
+
+    // 5. Redirect langsung ke halaman edit profile gym
+    return redirect()->route('admin.gyms.create', $gym->id)
+        ->with('success', 'Akun admin & gym berhasil dibuat! Silakan lengkapi profil gym Anda.');
+}
 
 
     // ============================
@@ -180,13 +183,11 @@ class AuthController extends Controller
         return redirect('/');
     }
 
-    
+    // ============================
+    // 🔹 Tambahan buat view register member
+    // ============================
     public function createMember()
-{
-    return view('auth.register'); // blade form register member
+    {
+        return view('auth.register'); // blade form register member
+    }
 }
-}
-
-
-
-

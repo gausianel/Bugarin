@@ -13,14 +13,19 @@ return new class extends Migration
     {
         Schema::create('membership_packages', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('gym_id');
+
+            // relasi ke gym
+            $table->foreignId('gym_id')->constrained('gyms')->cascadeOnDelete();
+
+            // kalau mau simpan admin yang punya / user khusus
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('name',);
+
+            $table->string('name');
             $table->decimal('price', 10, 2);
-            $table->integer('duration');
+            $table->integer('duration_in_months');
             $table->text('description')->nullable();
 
-            // ✅ tambahan biar query end_date ga error
+            // untuk hitung periode
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
 
@@ -34,9 +39,6 @@ return new class extends Migration
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
 
             $table->timestamps();
-
-            // foreign key gym_id
-            $table->foreign('gym_id')->references('id')->on('gyms')->onDelete('cascade');
         });
     }
 

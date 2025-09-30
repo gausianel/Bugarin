@@ -65,7 +65,7 @@ class User extends Authenticatable
     // 🔹 Relasi: satu user memiliki banyak MemberGym
     public function memberGyms()
     {
-        return $this->hasMany(Member_Gym::class, 'user_id');
+        return $this->hasMany(Member_Gym::class, 'member_id');
     }
 
     // 🔹 Relasi: user bisa daftar banyak kelas (via Attendance)
@@ -104,6 +104,13 @@ class User extends Authenticatable
     {
         return $this->hasOne(\App\Models\Gym_Admin::class, 'user_id');
     }
+
+    // App\Models\Member_Gym.php
+public function package()
+{
+    return $this->belongsTo(Membership_Package::class, 'package_id');
+}
+
 
      
 

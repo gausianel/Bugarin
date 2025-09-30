@@ -40,31 +40,35 @@ class GymController extends Controller
 
 
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name'    => 'required|string|max:255',
-            'address' => 'required|string',
-            'logo'    => 'nullable|image|mimes:jpg,png|max:2048',
-            'banner'  => 'nullable|image|mimes:jpg,png|max:5120',
-        ]);
+{
+    $validated = $request->validate([
+        'name'    => 'required|string|max:255',
+        'address' => 'required|string',
+        'logo'    => 'nullable|image|mimes:jpg,png|max:2048',
+        'banner'  => 'nullable|image|mimes:jpg,png|max:5120',
+    ]);
 
-        // tambahin created_by manual
-        $validated['created_by'] = auth()->id();
+    $validated['created_by'] = auth()->id();
 
-        $gym = Gym::create($validated);
+    $gym = Gym::create($validated);
 
-        if ($request->hasFile('logo')) {
-            $path = $request->file('logo')->store('gyms/logos', 'public');
-            $gym->update(['logo' => $path]);
-        }
+    // Hubungkan gym ke user admin
+    $user = Auth::user();
+    $user->gym_id = $gym->id;
+    $user->save();
 
-        if ($request->hasFile('banner')) {
-            $path = $request->file('banner')->store('gyms/banners', 'public');
-            $gym->update(['banner' => $path]);
-        }
-
-        return redirect()->route('admin.dashboard')->with('success', 'Gym created!');
+    // Upload file
+    if ($request->hasFile('logo')) {
+        $gym->update(['logo' => $request->file('logo')->store('gyms/logos', 'public')]);
     }
+    if ($request->hasFile('banner')) {
+        $gym->update(['banner' => $request->file('banner')->store('gyms/banners', 'public')]);
+    }
+
+    return redirect()->route('admin.dashboard')
+        ->with('success', 'Gym berhasil dibuat!');
+}
+
 
 
     public function edit(Gym $gym)

@@ -6,6 +6,7 @@ use App\Models\Member_Gym;
 use App\Models\Membership_Package;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 
 class MemberGymController extends Controller
@@ -24,32 +25,39 @@ class MemberGymController extends Controller
     }
 
     public function storePayment(Request $request)
-    {
-        $validated = $request->validate([
-            'package_id' => 'required|exists:membership_packages,id',
-            'payment_method' => 'required|string',
-            'amount' => 'required|numeric',
-        ]);
+{
+    $validated = $request->validate([
+        'package_id'      => 'required|exists:membership_packages,id',
+        'payment_method'  => 'required|string',
+        'amount'          => 'required|numeric',
+    ]);
 
-        $memberGym = Member_Gym::create([
-            'user_id' => auth()->id(),
-            'package_id' => $validated['package_id'],
-            'start_date' => now(),
-            'end_date' => now()->addDays(30), // contoh default 30 hari
-            'status' => 'active',
-        ]);
+    // ✅ ambil dulu package berdasarkan ID
+    $package = Membership_Package::findOrFail($validated['package_id']);
 
+    // simpan data membership user
+    $memberGym = Member_Gym::create([
+        'user_id'    => auth()->id(),
+        'package_id' => $package->id,
+        'start_date' => now(),
+        'end_date'   => now()->addMonths($package->duration_in_months), // ✅ bener
+        'status'     => 'active',
+    ]);
 
-        Payment::create([
-            'member_gym_id' => $memberGym->id,
-            'payment_method' => $validated['payment_method'],
-            'amount' => $validated['amount'],
-            'payment_date' => now(),
-            'status' => 'pending',
-        ]);
+    // simpan data payment
+    Payment::create([
+        'member_gym_id'   => $memberGym->id,
+        'payment_method'  => $validated['payment_method'],
+        'amount'          => $validated['amount'],
+        'payment_date'    => now(),
+        'status'          => 'pending',
+    ]);
 
-        return redirect()->route('member-gym.my-membership')->with('success', 'Payment submitted!');
-    }
+    return redirect()
+        ->route('member-gym.my-membership')
+        ->with('success', 'Payment submitted!');
+}
+
 
     public function viewMyMembership()
     {

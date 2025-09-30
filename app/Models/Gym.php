@@ -48,6 +48,8 @@ class Gym extends Model
         return $this->hasMany(User::class, 'gym_id');
     }
 
+    
+
 
 
 

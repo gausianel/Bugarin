@@ -16,7 +16,7 @@
                 @foreach($packages as $package)
                     <div class="p-6 bg-white border rounded-2xl shadow-md hover:shadow-xl transition">
                         <h2 class="text-xl font-semibold text-gray-800">{{ $package->name }}</h2>
-                        <p class="text-gray-500">Durasi: {{ $package->duration }} hari</p>
+                        <p class="text-gray-500">Durasi: {{ $package->duration_in_months }} bulan</p>
                         <p class="text-gray-700 mt-2">
                             {{ $package->description ?? 'Tidak ada deskripsi' }}
                         </p>

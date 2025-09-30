@@ -12,11 +12,12 @@ class Membership_Package extends Model
     'gym_id',
     'name',
     'price',
-    'duration',
+    'duration_in_months',
     'description',
     'created_by',
     'deleted_by',
     ];
+
 
     // 1 package bisa dipakai banyak member
     public function memberGyms()
@@ -38,8 +39,10 @@ class Membership_Package extends Model
     // Relasi ke user
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'member_id');
     }
+
+    
 
     
 

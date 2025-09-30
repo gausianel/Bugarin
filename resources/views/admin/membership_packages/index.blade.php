@@ -117,13 +117,7 @@
                 <textarea name="description" x-model="form.description" 
                           placeholder="Deskripsi Paket" class="w-full p-2 border rounded"></textarea>
 
-                <select name="gym_id" class="w-full p-2 border rounded" 
-                        x-show="!editing" required>
-                    <option value="">Pilih Gym</option>
-                    @foreach(App\Models\Gym::all() as $gym)
-                        <option value="{{ $gym->id }}">{{ $gym->name }}</option>
-                    @endforeach
-                </select>
+                
 
                 <!-- Tombol -->
                 <div class="flex space-x-3 pt-2">
@@ -176,7 +170,7 @@
                         <tr class="border-b hover:bg-gray-50 transition">
                             <td class="p-3">{{ $package->name }}</td>
                             <td class="p-3">Rp {{ number_format($package->price, 0, ',', '.') }}</td>
-                            <td class="p-3">{{ $package->duration }} bulan</td>
+                            <td class="p-3">{{ $package->duration_in_months }} bulan</td>
                             <td class="p-3">{{ $package->description ?? '-' }}</td>
                             <td class="p-3">{{ $package->gym->name ?? '-' }}</td>
                             <td class="p-3 flex space-x-2">

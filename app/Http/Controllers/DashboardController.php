@@ -13,6 +13,7 @@ use App\Models\Membership_Package;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Models\QrToken;
+use App\Models\Member_Gym;
 
 class DashboardController extends Controller
 {
@@ -64,27 +65,32 @@ class DashboardController extends Controller
 
     // Membership expired
         // Membership expired
-    $expiredMemberships = Membership_Package::whereHas('user', function($q) use ($gymId) {
+   $expiredMemberships = Member_Gym::whereHas('user', function($q) use ($gymId) {
         $q->where('gym_id', $gymId)->where('role', 'member');
     })
     ->where('end_date', '<', now())
     ->count();
 
+
     // Pendapatan bulan ini
-    $currentMonthRevenue = Membership_Package::whereHas('user', function($q) use ($gymId) {
+    $currentMonthRevenue = Member_Gym::whereHas('user', function($q) use ($gymId) {
         $q->where('gym_id', $gymId)->where('role', 'member');
     })
     ->whereMonth('start_date', now()->month)
     ->whereYear('start_date', now()->year)
-    ->sum('price');
-
-    // Pendapatan bulan sebelumnya
-    $previousMonthRevenue = Membership_Package::whereHas('user', function($q) use ($gymId) {
+    ->with('package')
+    ->get()
+    ->sum(fn($m) => $m->package->price);
+    
+$previousMonthRevenue = Member_Gym::whereHas('user', function($q) use ($gymId) {
         $q->where('gym_id', $gymId)->where('role', 'member');
     })
     ->whereMonth('start_date', now()->subMonth()->month)
     ->whereYear('start_date', now()->subMonth()->year)
-    ->sum('price');
+    ->with('package')
+    ->get()
+    ->sum(fn($m) => $m->package->price);
+
 
 
     // Hitung growth (%)
@@ -142,11 +148,12 @@ class DashboardController extends Controller
         $user = auth()->user();
 
         // ambil membership aktif user
-        $membership = Membership_Package::with('package')
-            ->where('user_id', $user->id)
-            ->latest()
-            ->first();
-
+            $membership = $user->memberships()
+                ->with('package')
+                ->where('status', 'active')
+                ->latest('end_date')
+                ->first();
+            
         // ambil max 3 jadwal kelas yang diikuti user
         $classes = $user->enrolledClasses()
             ->orderBy('day')

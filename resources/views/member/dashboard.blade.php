@@ -38,19 +38,40 @@
             <div class="bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition">
                 <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">🎟️ Status Membership</h2>
                 <div class="mt-3 text-gray-600 space-y-1 text-sm">
+
                     @php
-                        $membership = auth()->user()->memberships()->with('package')->latest('end_date')->first();
+                        $membership = auth()->user()
+                            ->memberships()
+                            ->with('package')
+                            ->latest('end_date')
+                            ->first();
                     @endphp
+                   
 
                     @if($membership)
-                        <p>Paket: <span class="font-bold text-indigo-600">{{ $membership->package->name ?? '-' }}</span></p>
-                        <p>Berlaku sampai: <span class="font-bold">{{ \Carbon\Carbon::parse($membership->end_date)->format('d F Y') }}</span></p>
-                        <p class="mt-2 {{ $membership->status === 'active' ? 'text-green-600' : 'text-red-600' }} font-semibold">
-                            {{ $membership->status === 'active' ? '✅ Aktif' : '❌ Tidak Aktif' }}
-                        </p>
-                    @else
-                        <p class="text-gray-500">Belum ada membership aktif</p>
-                    @endif
+                    <p>Paket: 
+                        <span class="font-bold text-indigo-600">
+                            {{ $membership->package->name ?? '-' }}
+                        </span>
+                    </p>
+                    <p>Durasi: 
+                        <span class="font-bold">
+                            {{ $membership->package ? $membership->package->duration_in_months.' bulan' : '-' }}
+                        </span>
+                    </p>
+                    <p>Berlaku sampai: 
+                        <span class="font-bold">
+                            {{ \Carbon\Carbon::parse($membership->end_date)->format('d F Y') }}
+                        </span>
+                    </p>
+                    <p class="mt-2 {{ $membership->status === 'active' ? 'text-green-600' : 'text-red-600' }} font-semibold">
+                        {{ $membership->status === 'active' ? '✅ Aktif' : '❌ Tidak Aktif' }}
+                    </p>
+                @else
+                    <p class="text-gray-500">Belum ada membership aktif</p>
+                @endif
+
+
                 </div>
             </div>
 

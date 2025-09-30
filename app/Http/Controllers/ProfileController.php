@@ -112,7 +112,7 @@ class ProfileController extends Controller
         $membership->gym_id = $package->gym_id;
         $membership->package_id = $package->id;
         $membership->start_date = now();
-        $membership->end_date = now()->addDays($package->duration);
+        $membership->end_date = now()->addMonths($package->duration);
         $membership->status = 'active';
         $membership->save();
 
