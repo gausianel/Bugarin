@@ -131,6 +131,26 @@
                     <canvas id="weeklyAttendanceChart" height="160"></canvas>
                 </div>
 
+                
+                <!-- Scan QR Code -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-lg font-semibold text-gray-700">📷 Scan QR Code</h2>
+                    
+                    <!-- Tempat kamera -->
+                    <div id="reader" style="width:100%; max-width:400px;" class="mx-auto mt-4"></div>
+
+                    <!-- Form untuk auto submit -->
+                    <form id="scanForm" action="{{ route('admin.scan.qr.check') }}" method="POST" class="hidden">
+                        @csrf
+                        <input type="hidden" id="qrToken" name="token">
+                    </form>
+
+                    <!-- Optional: tampilkan token yg berhasil discan -->
+                    <div id="scan-result" class="mt-3 text-green-600 font-bold text-center"></div>
+                </div>
+
+
+
                  <!-- Form Testing Manual Check-in -->
                 <form action="{{ route('admin.scan.qr.check') }}" method="POST" class="mt-6 w-full">                
                     @csrf
@@ -174,5 +194,32 @@
             }
         });
     </script>
+
+    
+
+<!-- HTML5 QR Code Scanner -->
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script>
+    function onScanSuccess(decodedText, decodedResult) {
+        console.log("Scanned:", decodedText);
+
+        // set token ke hidden input
+        document.getElementById("qrToken").value = decodedText;
+
+        // auto submit form
+        document.getElementById("scanForm").submit(); 
+    }
+
+    function onScanError(errorMessage) {
+        console.warn(`QR error = ${errorMessage}`);
+    }
+
+    // aktifin kamera
+    const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess, onScanError);
+</script>
+
+
+    
 
 @endsection

@@ -61,7 +61,7 @@
                     </p>
                     <p>Berlaku sampai: 
                         <span class="font-bold">
-                            {{ \Carbon\Carbon::parse($membership->end_date)->format('d F Y') }}
+                            {{ \Carbon\Carbon::parse($membership->end_date) ->format('d F Y') }}
                         </span>
                     </p>
                     <p class="mt-2 {{ $membership->status === 'active' ? 'text-green-600' : 'text-red-600' }} font-semibold">
@@ -138,16 +138,25 @@
                 <h2 class="text-lg font-semibold text-gray-800 mb-3">🎫 QR Check-in Anda</h2>
                 
                 <div id="qrcode" class="bg-gray-100 p-3 rounded-lg"></div>
-                <p class="mt-2 text-gray-600 text-center text-sm">Scan QR ini di gym untuk melakukan check-in.</p>
+                
+                <!-- TOKEN DI BAWAH QR -->
+                <div class="flex flex-col items-center gap-2 mt-3">
+                    <p id="tokenText" 
+                    class="font-mono text-base text-indigo-600 tracking-wider">
+                    {{ $token }}
+                    </p>
+                    <button onclick="copyToken()" 
+                        class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm text-gray-700 transition">
+                        📋 Copy
+                    </button>
+                </div>
 
-                <button 
-                    id="refreshBtn"
-                    onclick="refreshQr()" 
-                    class="mt-3 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-medium shadow-md transition text-sm">
-                    🔄 Refresh QR Code
-                </button>
+                <p class="mt-2 text-gray-600 text-center text-sm">
+                    Scan QR ini di gym untuk melakukan check-in.<br>
+                    Token dapat digunakan sebagai alternatif manual.
+                </p>
+
             </div>
-
         </div>
     </main>
 
@@ -160,6 +169,7 @@
 <script>
     let currentToken = "{{ $token }}";
 
+    // 🔹 Generate QR Code
     function generateQr(token) {
         document.getElementById("qrcode").innerHTML = "";
         new QRCode(document.getElementById("qrcode"), {
@@ -172,6 +182,7 @@
         });
     }
 
+    // 🔹 Refresh QR & Token
     function refreshQr() {
         console.log("Refreshing QR...");
         const btn = document.getElementById("refreshBtn");
@@ -183,7 +194,14 @@
             .then(data => {
                 console.log("New Token:", data.token);
                 currentToken = data.token;
+
+                // update QR
                 generateQr(currentToken);
+
+                // update teks token
+                document.getElementById("tokenText").innerText = currentToken;
+
+                showToast("🔄 QR Code diperbarui!");
             })
             .catch(err => console.error("Error refreshing QR:", err))
             .finally(() => {
@@ -192,9 +210,64 @@
             });
     }
 
+    // 🔹 Copy Token
+    function copyToken() {
+        const tokenElement = document.getElementById("tokenText");
+        const tokenText = tokenElement ? tokenElement.textContent.trim() : "";
+
+        if (!tokenText) {
+            console.error("Token tidak ditemukan!");
+            return;
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(tokenText).then(() => {
+                showToast("✅ Token berhasil dicopy!");
+            }).catch(err => {
+                console.error("Gagal copy:", err);
+            });
+        } else {
+            // fallback
+            const textarea = document.createElement("textarea");
+            textarea.value = tokenText;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = 0;
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                document.execCommand("copy");
+                showToast("✅ Token berhasil dicopy!");
+            } catch (err) {
+                console.error("Fallback gagal copy:", err);
+            }
+            document.body.removeChild(textarea);
+        }
+    }
+
+    // 🔹 Toast Notif
+    function showToast(message) {
+        const toast = document.createElement("div");
+        toast.innerText = message;
+        toast.className = "fixed bottom-5 right-5 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm opacity-0 transition-opacity duration-300";
+        document.body.appendChild(toast);
+
+        // fade in
+        setTimeout(() => {
+            toast.classList.add("opacity-100");
+        }, 50);
+
+        // fade out + remove
+        setTimeout(() => {
+            toast.classList.remove("opacity-100");
+            setTimeout(() => toast.remove(), 300);
+        }, 2000);
+    }
+
+    // 🔹 Generate pertama kali
     generateQr(currentToken);
 
-    // Auto refresh tiap 30 detik
+    // 🔹 Auto refresh tiap 30 detik
     setInterval(refreshQr, 30000);
 </script>
 @endpush

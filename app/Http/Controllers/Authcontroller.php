@@ -99,7 +99,7 @@ class AuthController extends Controller
     // ============================
     // 🔹 Register Admin + Gym
     // ============================
-    public function storeGym(Request $request)
+  public function storeGym(Request $request)
 {
     $data = $request->validate([
         'name'     => 'required|string|max:255',
@@ -119,27 +119,11 @@ class AuthController extends Controller
     Auth::login($user);
     $request->session()->regenerate();
 
-    // 3. Buat gym default (kosong dulu)
-    $gym = Gym::create([
-    'name'        => "Gym " . $user->name,
-    'address'     => 'Alamat belum diisi',
-    'description' => 'Deskripsi gym belum diisi',
-]);
-
-
-    // 4. Hubungkan user admin ke gym barunya
-    $user->gym_id = $gym->id;
-    $user->save();
-
-    Log::info('Admin registered & gym created', [
-        'admin_id' => $user->id,
-        'gym_id'   => $gym->id,
-    ]);
-
-    // 5. Redirect langsung ke halaman edit profile gym
-    return redirect()->route('admin.gyms.create', $gym->id)
-        ->with('success', 'Akun admin & gym berhasil dibuat! Silakan lengkapi profil gym Anda.');
+    // 3. Redirect ke form isi profil gym
+    return redirect()->route('admin.gyms.create')
+        ->with('success', 'Akun admin berhasil dibuat! Silakan lengkapi profil gym Anda.');
 }
+
 
 
     // ============================

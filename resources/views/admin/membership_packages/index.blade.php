@@ -6,14 +6,14 @@
 <div class="flex min-h-screen bg-gray-100" 
      x-data="{
         editing: false, 
-        form: { id:'', name:'', price:'', duration:'', description:'', gym_id:'' }, 
+        form: { id:'', name:'', price:'', duration_in_months:'', description:'', gym_id:'' }, 
         setEdit(pkg){ 
             this.editing = true; 
             this.form = { ...pkg } 
         }, 
         resetForm(){ 
             this.editing = false; 
-            this.form = { id:'', name:'', price:'', duration:'', description:'', gym_id:'' } 
+            this.form = { id:'', name:'', price:'', duration_in_months:'', description:'', gym_id:'' } 
         } 
      }">
 
@@ -111,7 +111,7 @@
                 <input type="number" name="price" x-model="form.price" 
                        placeholder="Harga" class="w-full p-2 border rounded" min="0" required>
 
-                <input type="number" name="duration" x-model="form.duration" 
+                <input type="number" name="duration_in_months" x-model="form.duration_in_months" 
                        placeholder="Durasi (bulan)" class="w-full p-2 border rounded" min="1" required>
 
                 <textarea name="description" x-model="form.description" 

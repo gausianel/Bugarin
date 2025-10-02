@@ -174,23 +174,33 @@ $previousMonthRevenue = Member_Gym::whereHas('user', function($q) use ($gymId) {
 
         // 🔹 Generate QR Token untuk member
         // Cek dulu apakah user udah punya token aktif, update atau buat baru
-        $qr = QrToken::updateOrCreate(
-            ['user_id' => $user->id], // cek berdasarkan user_id
-            [
-                'token' => Str::random(8), // generate token baru
-                'expires_at' => now()->addMinutes(2), // berlaku 2 menit
-            ]
-        );
+        // Cek token aktif user
+        $qr = QrToken::where('user_id', $user->id)
+            ->where('expires_at', '>=', now())
+            ->latest()
+            ->first();
 
-        $token = $qr->token; // kirim ke blade untuk generate QR
+        if (!$qr) {
+            // Kalau belum ada token aktif → generate baru
+            $qr = QrToken::create([
+                'user_id'    => $user->id,
+                'token'      => Str::random(32), // bikin lebih panjang & unik
+                'expires_at' => now()->addMinutes(2),
+            ]);
+        }
 
-        return view('member.dashboard', compact(
-            'membership',
-            'classes',
-            'attendances',
-            'announcements',
-            'token' // kirim ke blade untuk generate QR
-        ));
+        $token = $qr->token;
+                // kirim ke blade untuk generate QR
+
+                // dd($membership->toArray()); // 👈 cek di sini
+
+                return view('member.dashboard', compact(
+                    'membership',
+                    'classes',
+                    'attendances',
+                    'announcements',
+                    'token' // kirim ke blade untuk generate QR
+                ));
     }
 
 

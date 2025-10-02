@@ -24,7 +24,7 @@ class MemberGymController extends Controller
         return view('member_gym.payment_option', compact('package', 'paymentMethods'));
     }
 
-    public function storePayment(Request $request)
+   public function storePayment(Request $request)
 {
     $validated = $request->validate([
         'package_id'      => 'required|exists:membership_packages,id',
@@ -32,25 +32,31 @@ class MemberGymController extends Controller
         'amount'          => 'required|numeric',
     ]);
 
-    // ✅ ambil dulu package berdasarkan ID
     $package = Membership_Package::findOrFail($validated['package_id']);
 
-    // simpan data membership user
+    // Hitung tanggal
+    $start = now();
+    $end   = $start->copy()
+        ->addMonths($package->duration_in_months)
+        ->endOfMonth(); // ✅ perbaikan
+
+    // Simpan membership
     $memberGym = Member_Gym::create([
-        'user_id'    => auth()->id(),
+        'member_id'  => auth()->id(),
+        'gym_id'     => $package->gym_id,
         'package_id' => $package->id,
-        'start_date' => now(),
-        'end_date'   => now()->addMonths($package->duration_in_months), // ✅ bener
+        'start_date' => $start->toDateString(),
+        'end_date'   => $end,
         'status'     => 'active',
     ]);
 
-    // simpan data payment
+    // Simpan payment
     Payment::create([
-        'member_gym_id'   => $memberGym->id,
-        'payment_method'  => $validated['payment_method'],
-        'amount'          => $validated['amount'],
-        'payment_date'    => now(),
-        'status'          => 'pending',
+        'member_gym_id'  => $memberGym->id,
+        'payment_method' => $validated['payment_method'],
+        'amount'         => $validated['amount'],
+        'payment_date'   => now(),
+        'status'         => 'pending',
     ]);
 
     return redirect()
@@ -59,15 +65,16 @@ class MemberGymController extends Controller
 }
 
 
-    public function viewMyMembership()
-    {
-        $memberships = Member_Gym::where('user_id', auth()->id())
+public function viewMyMembership()
+{
+    $memberships = Member_Gym::where('member_id', auth()->id())
         ->with(['package'])
         ->get();
 
+    return view('member_gym.my_membership', compact('memberships'));
+}
 
-        return view('member_gym.my_membership', compact('memberships'));
-    }
+
 
     
 }
