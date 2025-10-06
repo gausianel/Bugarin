@@ -70,7 +70,7 @@
                         Daftar sebagai Member
                     </a>
                     <a href="{{ route('register.gym') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        Daftar sebagai Gym
+                        Daftar sebagai Admin
                     </a>
                 </div>
             </div>
@@ -106,7 +106,7 @@
         <a href="{{ route('register.gym') }}" 
         class="inline-flex items-center ml-4 bg-white/90 hover:bg-gray-100 text-gray-900 px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg transform hover:scale-105 transition">
             <i class="fa-solid fa-dumbbell mr-2 text-blue-600"></i>
-            Mulai Sebagai Gym
+            Mulai Sebagai Admin Gym
         </a>
     </div>
 
@@ -114,9 +114,9 @@
 
     <!-- Features -->
     <section class="py-16">
-        <h1 class="text-5xl text-center font-bold text-blue-600">Fitur Unggulan</h1>
+        <h1 class="text-5xl text-center font-bold text-blue-600">Kenapa harus Bugarin?</h1>
         <p class="text-xl text-center text-gray-600 mt-4 max-w-2xl mx-auto">
-            Fitur-fitur unggulan kami yang bikin manajemen gym lebih mudah.
+            Bugarin hadir denganFitur-fitur unggulan yang membantu manajemen gym lebih mudah.
         </p>
         <div class="py-12 px-8 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <div class="bg-white shadow rounded-lg p-8 text-center hover:shadow-xl transition scroll-animate">
@@ -165,55 +165,103 @@
         </div>
     </section>
 
-   <!-- Footer -->
-<footer class="bg-blue-700 text-white pt-16 pb-8">
-    <div class="max-w-6xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-12">
-        
-        <!-- Kolom Kiri -->
-        <div>
-            <h3 class="text-2xl font-semibold mb-4">Contact Info</h3>
-            <ul class="space-y-3 text-gray-300 text-lg leading-relaxed">
-                <li class="flex items-center space-x-3">
-                    <span>📍</span><span>Jl. Fitness No. 123, Jakarta</span>
-                </li>
-                <li class="flex items-center space-x-3">
-                    <span>📧</span><span>support@bugarin.com</span>
-                </li>
-                <li class="flex items-center space-x-3">
-                    <span>📞</span><span>+62 812-3456-7890</span>
-                </li>
-            </ul>
-        </div>
+   
 
+<!-- ✅ FAQ Section -->
+<section class="py-16 bg-white scroll-animate">
+  <div class="max-w-4xl mx-auto px-6">
+    <h2 class="text-4xl font-bold text-center text-blue-600 mt-4 mb-10 scroll-animate">
+      Tanya Jawab Seputar Bugarin
+    </h2>
+    <div class="space-y-4">
+      <!-- FAQ item -->
+      <details class="group bg-gray-50 p-5 rounded-xl shadow-sm scroll-animate">
+        <summary class="flex justify-between items-center cursor-pointer font-semibold text-gray-700">
+          Apakah Bugarin gratis untuk dicoba?
+          <span class="transition-transform group-open:rotate-180">▼</span>
+        </summary>
+        <p class="mt-3 text-gray-600 text-sm">Ya, Anda bisa mencoba versi demo gratis sebelum berlangganan.</p>
+      </details>
 
-        <!-- Kolom Kanan -->
-        <div>
-            <h3 class="text-xl font-semibold mb-4">Stay Connected</h3>
-            <p class="text-gray-300 mb-4">Dapatkan tips fitness, promo, dan info terbaru langsung di email Anda.</p>
-            
-            <form class="flex items-center">
-                <input type="email" placeholder="Masukkan email" 
-                       class="w-full px-4 py-2 rounded-l-lg text-gray-800 focus:outline-none">
-                <button type="submit" 
-                        class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-r-lg font-semibold">
-                    Kirim
-                </button>
-            </form>
+      <details class="group bg-gray-50 p-5 rounded-xl shadow-sm scroll-animate">
+        <summary class="flex justify-between items-center cursor-pointer font-semibold text-gray-700">
+          Bisakah 1 gym punya lebih dari 1 admin?
+          <span class="transition-transform group-open:rotate-180">▼</span>
+        </summary>
+        <p class="mt-3 text-gray-600 text-sm">Bisa, setiap gym dapat menambahkan lebih dari satu admin sesuai kebutuhan.</p>
+      </details>
 
-            <div class="flex space-x-6 text-2xl mt-6">
-                <a href="#" class="hover:text-pink-500 transition-colors duration-300"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#" class="hover:text-blue-400 transition-colors duration-300"><i class="fa-regular fa-envelope"></i></a>
-                <a href="#" class="hover:text-green-400 transition-colors duration-300"><i class="fa-brands fa-whatsapp"></i></a>
-            </div>
-        </div>
+      <details class="group bg-gray-50 p-5 rounded-xl shadow-sm scroll-animate">
+        <summary class="flex justify-between items-center cursor-pointer font-semibold text-gray-700">
+          Apakah member bisa absen dengan QR code?
+          <span class="transition-transform group-open:rotate-180">▼</span>
+        </summary>
+        <p class="mt-3 text-gray-600 text-sm">Ya, sistem absensi sudah mendukung QR code agar lebih cepat dan aman.</p>
+      </details>
+
+      <details class="group bg-gray-50 p-5 rounded-xl shadow-sm scroll-animate">
+        <summary class="flex justify-between items-center cursor-pointer font-semibold text-gray-700">
+          Bagaimana cara melakukan pembayaran paket?
+          <span class="transition-transform group-open:rotate-180">▼</span>
+        </summary>
+        <p class="mt-3 text-gray-600 text-sm">Pembayaran paket bisa dilakukan online via transfer bank atau e-wallet.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ✅ CTA + Footer Gabungan -->
+<footer class="bg-blue-600 text-white mt-4 scroll-animate">
+  <!-- Footer Info -->
+  <div class="max-w-6xl mx-auto px-8 py-12 grid grid-cols-1 md:grid-cols-2 gap-12">
+    <!-- Kolom Kiri -->
+    <div class="scroll-animate">
+      <h3 class="text-xl font-semibold mb-4">Contact Info</h3>
+      <ul class="space-y-3 text-gray-200 text-lg leading-relaxed">
+        <li class="flex items-center space-x-3">📍 <span>Jl. Fitness No. 123, Jakarta</span></li>
+        <li class="flex items-center space-x-3">📧 <span>support@bugarin.com</span></li>
+        <li class="flex items-center space-x-3">📞 <span>+62 812-3456-7890</span></li>
+      </ul>
     </div>
 
-    <!-- Copyright -->
-    <div class="mt-10 border-t border-blue-600 pt-6 text-center text-white text-sm">
-        © {{ date('Y') }} Bugarin. All rights reserved.
+    <!-- Kolom Kanan -->
+    <div class="scroll-animate">
+      <h3 class="text-xl font-semibold mb-4">Stay Connected</h3>
+      <p class="text-gray-200 mb-4">Dapatkan tips fitness, promo, dan info terbaru langsung di email Anda.</p>
+      <form class="flex items-center">
+        <input type="email" placeholder="Masukkan email" 
+               class="w-full px-4 py-2 rounded-l-lg text-gray-800 focus:outline-none">
+        <button type="submit" 
+                class="bg-blue-400 hover:bg-blue-500 text-blue-900 px-4 py-2 rounded-r-lg font-semibold">
+          Kirim
+        </button>
+      </form>
+      <div class="flex space-x-6 text-2xl mt-6">
+        <a href="#" class="hover:text-pink-400 transition"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="hover:text-blue-300 transition"><i class="fa-regular fa-envelope"></i></a>
+        <a href="#" class="hover:text-green-400 transition"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
     </div>
+  </div>
+
+  <!-- Copyright -->
+  <div class="border-t border-blue-500 text-center py-6 text-sm text-white scroll-animate">
+    © {{ date('Y') }} Bugarin. All rights reserved.
+  </div>
 </footer>
-    </div>
+
+<!-- Tambahin CSS animasi -->
+<style>
+  .scroll-animate {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s ease-in-out;
+  }
+  .scroll-animate.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
 
   <!-- 🔹 Script Loading + Scroll Animation + Dropdown Toggle -->
   <script>

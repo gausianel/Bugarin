@@ -48,13 +48,14 @@ class DashboardController extends Controller
         ->whereDate('created_at', now()->toDateString())
         ->count();
 
-    // Member aktif
-    $activeMembers = User::where('gym_id', $gymId)
-        ->where('role', 'member')
-        ->whereHas('memberships', function($q) {
-            $q->where('status', true);
-        })
-        ->count();
+   // Member aktif (pake tabel Member_Gym)
+        $activeMembers = Member_Gym::whereHas('user', function($q) use ($gymId) {
+                $q->where('gym_id', $gymId)->where('role', 'member');
+            })
+            ->where('status', 'active')
+            ->whereDate('end_date', '>=', now())
+            ->count();
+
 
     // Member baru bulan ini
     $newMembersThisMonth = User::where('gym_id', $gymId)
@@ -95,8 +96,9 @@ $previousMonthRevenue = Member_Gym::whereHas('user', function($q) use ($gymId) {
 
     // Hitung growth (%)
     $revenueGrowth = $previousMonthRevenue > 0
-        ? (($currentMonthRevenue - $previousMonthRevenue) / $previousMonthRevenue) * 100
-        : 0;
+    ? round((($currentMonthRevenue - $previousMonthRevenue) / $previousMonthRevenue) * 100, 2)
+    : 0;
+
 
     // Weekly Attendance chart
     $weeklyLabels = [];
@@ -115,13 +117,30 @@ $previousMonthRevenue = Member_Gym::whereHas('user', function($q) use ($gymId) {
         'data'   => $weeklyData
     ];
 
+    // ✅ fallback kalau kosong
+    if (empty($weeklyAttendance['labels']) || empty($weeklyAttendance['data'])) {
+        $weeklyAttendance = [
+            'labels' => [],
+            'data'   => []
+        ];
+    }
+
+
     // Recent Activities
-    $recentActivities = Attendance::whereHas('user', function($q) use ($gymId) {
+   $recentActivities = Attendance::whereHas('user', function($q) use ($gymId) {
         $q->where('gym_id', $gymId)->where('role', 'member');
     })
+    ->with('user')
     ->latest()
     ->take(5)
-    ->get();
+    ->get()
+    ->map(function ($a) {
+        return [
+            'message' => "<b>{$a->user->name}</b> melakukan absensi",
+            'time'    => $a->created_at->diffForHumans(),
+        ];
+    });
+
 
     return view('admin.dashboard', [
         'totalMembers'        => $totalMembers,
@@ -202,6 +221,28 @@ $previousMonthRevenue = Member_Gym::whereHas('user', function($q) use ($gymId) {
                     'token' // kirim ke blade untuk generate QR
                 ));
     }
+
+    public function index()
+{
+    // contoh data absensi minggu ini
+    $startOfWeek = Carbon::now()->startOfWeek();
+    $endOfWeek = Carbon::now()->endOfWeek();
+
+    $weeklyLabels = [];
+    $weeklyData = [];
+
+    for ($date = $startOfWeek->copy(); $date->lte($endOfWeek); $date->addDay()) {
+        $weeklyLabels[] = $date->format('D'); // Sen, Sel, Rabu...
+        $weeklyData[] = Attendance::whereDate('date', $date)->count();
+    }
+
+    $weeklyAttendance = [
+        'labels' => $weeklyLabels,
+        'data'   => $weeklyData,
+    ];
+
+    return view('admin.dashboard', compact('weeklyAttendance'));
+}
 
 
 

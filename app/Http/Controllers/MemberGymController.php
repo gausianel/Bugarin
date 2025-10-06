@@ -74,6 +74,24 @@ public function viewMyMembership()
     return view('member_gym.my_membership', compact('memberships'));
 }
 
+public function activeMembers()
+{
+    $activeMembers = Member_Gym::where('status', 'active')
+        ->where('end_date', '>=', now())
+        ->with(['package', 'member'])
+        ->get();
+
+    $inactiveMembers = Member_Gym::where(function ($q) {
+            $q->where('status', '!=', 'active')
+              ->orWhere('end_date', '<', now());
+        })
+        ->with(['package', 'member'])
+        ->get();
+
+    return view('member_gym.member_status', compact('activeMembers', 'inactiveMembers'));
+}
+
+
 
 
     

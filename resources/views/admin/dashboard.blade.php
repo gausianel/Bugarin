@@ -118,7 +118,7 @@
                                 <span class="text-xs text-gray-400">{{ $activity['time'] }}</span>
                             </li>
                         @empty
-                            <li class="text-gray-400 text-sm">Belum ada aktivitas terbaru.</li>
+                            <li class="text-gray-400 text-sm">Fitur belum tersedia.</li>
                         @endforelse
                     </ul>
                 </div>
@@ -128,26 +128,46 @@
                     <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                         📊 Statistik Absensi Mingguan
                     </h2>
+                     <p class="text-gray-400 text-sm">Fitur belum tersedia.</p>
+
                     <canvas id="weeklyAttendanceChart" height="160"></canvas>
                 </div>
 
                 
-                <!-- Scan QR Code -->
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <h2 class="text-lg font-semibold text-gray-700">📷 Scan QR Code</h2>
-                    
-                    <!-- Tempat kamera -->
-                    <div id="reader" style="width:100%; max-width:400px;" class="mx-auto mt-4"></div>
+                <!-- Card Scan QR -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                📷 Scan QR Code
+            </h2>
 
-                    <!-- Form untuk auto submit -->
-                    <form id="scanForm" action="{{ route('admin.scan.qr.check') }}" method="POST" class="hidden">
-                        @csrf
-                        <input type="hidden" id="qrToken" name="token">
-                    </form>
+            <!-- Tombol mulai scanning -->
+            <div class="mt-4 text-center space-x-2">
+                <button id="startScanBtn"
+                    class="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-camera"></i> Mulai Scanning
+                </button>
+                <button id="stopScanBtn"
+                    class="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition hidden">
+                    ⛔ Stop
+                </button>
+            </div>
 
-                    <!-- Optional: tampilkan token yg berhasil discan -->
-                    <div id="scan-result" class="mt-3 text-green-600 font-bold text-center"></div>
-                </div>
+            <!-- Tempat kamera -->
+            <div id="reader-container" class="mt-4 hidden">
+                <div id="reader" class="mx-auto rounded-lg overflow-hidden shadow-md"
+                    style="width: 100%; max-width: 400px;"></div>
+            </div>
+
+            <!-- Form untuk auto submit -->
+            <form id="scanForm" action="{{ route('admin.scan.qr.check') }}" method="POST" class="hidden">
+                @csrf
+                <input type="hidden" id="qrToken" name="token">
+            </form>
+
+            <!-- Hasil Scan -->
+            <div id="scan-result" class="mt-3 text-green-600 font-bold text-center"></div>
+        </div>
+
 
 
 
@@ -167,59 +187,89 @@
     </main>
 </div>
 
-    <!-- Chart.js -->
-    <script>
-        // fallback kalau $weeklyAttendance belum didefinisikan
-        const _weeklyAttendance = @json($weeklyAttendance ?? ['labels' => [], 'data' => []]);
+   <!-- Chart.js -->
+<script>
+    // fallback kalau $weeklyAttendance belum didefinisikan
+    const _weeklyAttendance = @json($weeklyAttendance ?? ['labels' => [], 'data' => []]);
 
-        const ctx = document.getElementById('weeklyAttendanceChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: _weeklyAttendance.labels,
-                datasets: [{
-                    label: 'Absensi Harian',
-                    data: _weeklyAttendance.data,
-                    borderColor: '#4F46E5',
-                    backgroundColor: 'rgba(79,70,229,0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true } }
-            }
-        });
-    </script>
+    const ctx = document.getElementById('weeklyAttendanceChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: _weeklyAttendance.labels,
+            datasets: [{
+                label: 'Absensi Harian',
+                data: _weeklyAttendance.data,
+                borderColor: '#4F46E5',
+                backgroundColor: 'rgba(79,70,229,0.1)',
+                tension: 0.4,
+                fill: true,
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+</script>
 
-    
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- HTML5 QR Code Scanner -->
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script>
-    function onScanSuccess(decodedText, decodedResult) {
-        console.log("Scanned:", decodedText);
+    let html5QrcodeScanner;
 
-        // set token ke hidden input
-        document.getElementById("qrToken").value = decodedText;
+    const startBtn = document.getElementById("startScanBtn");
+    const stopBtn = document.getElementById("stopScanBtn");
+    const readerContainer = document.getElementById("reader-container");
 
-        // auto submit form
-        document.getElementById("scanForm").submit(); 
-    }
+    startBtn.addEventListener("click", function () {
+        readerContainer.classList.remove("hidden");
+        stopBtn.classList.remove("hidden");
+        startBtn.classList.add("hidden");
 
-    function onScanError(errorMessage) {
-        console.warn(`QR error = ${errorMessage}`);
-    }
+        html5QrcodeScanner = new Html5Qrcode("reader");
+        html5QrcodeScanner.start(
+            { facingMode: "environment" }, // kamera belakang
+            { fps: 10, qrbox: 250 },
+            (decodedText) => {
+                console.log("Scanned:", decodedText);
 
-    // aktifin kamera
-    const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
-    html5QrcodeScanner.render(onScanSuccess, onScanError);
+                // Set ke hidden input
+                document.getElementById("qrToken").value = decodedText;
+
+                // Notifikasi sukses
+                Swal.fire({
+                    title: "✅ Scan Berhasil!",
+                    text: "Token: " + decodedText,
+                    icon: "success",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
+                // Auto submit setelah delay biar notif kebaca
+                setTimeout(() => {
+                    document.getElementById("scanForm").submit();
+                }, 2000);
+            },
+            (errorMessage) => {
+                console.warn(errorMessage);
+            }
+        );
+    });
+
+    stopBtn.addEventListener("click", function () {
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.stop().then(() => {
+                readerContainer.classList.add("hidden");
+                stopBtn.classList.add("hidden");
+                startBtn.classList.remove("hidden");
+            }).catch(err => console.error("Stop failed", err));
+        }
+    });
 </script>
-
-
-    
-
 @endsection

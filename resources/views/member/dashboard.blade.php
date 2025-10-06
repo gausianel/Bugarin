@@ -31,8 +31,8 @@
 
 
     <!-- Content Wrapper (biar mirip tampilan aplikasi HP) -->
-    <main class="flex-1 p-4">
-        <div class="w-full max-w-md mx-auto space-y-6">
+    <main class="flex-1 flex items-center justify-center p-4 bg-gray-100">
+        <div class="w-full max-w-md mx-auto space-y-6 pb-20">
 
             {{-- Membership --}}
             <div class="bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition">
@@ -133,41 +133,71 @@
                 </ul>
             </div>
 
-            {{-- QR Check-in --}}
-            <div class="bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition flex flex-col items-center">
-                <h2 class="text-lg font-semibold text-gray-800 mb-3">🎫 QR Check-in Anda</h2>
-                
-                <div id="qrcode" class="bg-gray-100 p-3 rounded-lg"></div>
-                
-                <!-- TOKEN DI BAWAH QR -->
-                <div class="flex flex-col items-center gap-2 mt-3">
-                    <p id="tokenText" 
-                    class="font-mono text-base text-indigo-600 tracking-wider">
-                    {{ $token }}
-                    </p>
-                    <button onclick="copyToken()" 
-                        class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm text-gray-700 transition">
-                        📋 Copy
-                    </button>
-                </div>
+            {{-- Floating QR Button (tengah bawah) --}}
+            <button id="openQrModal"
+                class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white p-3 rounded-full shadow-lg hover:bg-indigo-700 transition z-30">
+                <i class="fa-solid fa-qrcode text-2xl"></i>
+            </button>
 
-                <p class="mt-2 text-gray-600 text-center text-sm">
-                    Scan QR ini di gym untuk melakukan check-in.<br>
-                    Token dapat digunakan sebagai alternatif manual.
-                </p>
+
+        </div> {{-- penutup max-w-md --}}
+        </main>
+        </div>
+
+        {{-- Modal QR (DIPINDAH KE LUAR agar tetap center) --}}
+        <div id="qrModal" 
+            class="fixed inset-0 bg-black bg-opacity-50 hidden z-40 flex items-center justify-center">
+            <div class="bg-white p-6 rounded-2xl shadow-lg w-[90%] max-w-sm text-center relative mx-auto">
+            
+            <!-- Close Button -->
+            <button id="closeQrModal" 
+                class="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-lg">
+                ✖
+            </button>
+
+            <h2 class="text-lg font-semibold text-gray-800 mb-3">🎫 QR Check-in Anda</h2>
+            <div id="qrcode" class="bg-gray-100 p-3 rounded-lg inline-block"></div>
+
+            <!-- TOKEN -->
+            <p id="tokenText" class="font-mono text-base text-indigo-600 tracking-wider mt-3">
+                {{ $token }}
+            </p>
+            <button onclick="copyToken()" 
+                class="mt-2 px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm text-gray-700 transition">
+                📋 Copy
+            </button>
+
+            <p class="mt-3 text-gray-600 text-sm">
+                Scan QR ini di gym untuk check-in.<br>
+                Token bisa dipakai sebagai alternatif manual.
+            </p>
+        </div>
+    </div>
+
 
             </div>
-        </div>
-    </main>
+        </main>
 
-</div>
-@endsection
+    </div>
+    @endsection
 
 
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
     let currentToken = "{{ $token }}";
+
+        // 🔹 Buka & Tutup Modal
+    const modal = document.getElementById("qrModal");
+    document.getElementById("openQrModal").addEventListener("click", () => {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    });
+    document.getElementById("closeQrModal").addEventListener("click", () => {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+    });
+
 
     // 🔹 Generate QR Code
     function generateQr(token) {
@@ -185,9 +215,7 @@
     // 🔹 Refresh QR & Token
     function refreshQr() {
         console.log("Refreshing QR...");
-        const btn = document.getElementById("refreshBtn");
-        btn.disabled = true;
-        btn.innerText = "⏳ Refreshing...";
+       
 
         fetch("{{ route('member.qr.refresh') }}")
             .then(res => res.json())
